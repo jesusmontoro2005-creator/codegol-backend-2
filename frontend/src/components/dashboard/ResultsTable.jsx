@@ -1,0 +1,3 @@
+export default function ResultsTable({ results }) {
+  return <div className="results-table-wrap"><table className="results-table"><thead><tr><th>PARTIDO</th><th>TORNEO</th><th>FECHA</th><th>ESTADO</th></tr></thead><tbody>{results.map((result, index) => <tr key={`${result.home}-${index}`}><td><div className="result-match"><b>{result.home}</b><span className="result-score">{result.score}</span><b>{result.away}</b></div></td><td><span className="league-pill">{result.league}</span></td><td>{result.date}</td><td><span className="status-pill"><i /> {result.status}</span></td></tr>)}</tbody></table></div>
+}

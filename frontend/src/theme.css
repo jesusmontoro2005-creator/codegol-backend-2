@@ -1,0 +1,28 @@
+:root {
+  --brand-teal: #0faeaa;
+  --brand-teal-dark: #087f89;
+  --brand-orange: #ff8a3d;
+}
+
+.admin-shell[data-theme='dark'] .nav-link.active { background: #194b4d; color: #b8f1ec; }
+.metric-icon.teal { background: #e5f8f5; color: var(--brand-teal-dark); }
+.match-league-dot.teal { background: var(--brand-orange); }
+.player-number { color: var(--brand-orange); }
+.login-art { background: linear-gradient(145deg, #073f4d, #075d66 58%, #087f79); }
+.login-art h2 span { color: #ff9a55; }
+.login-art-tag i { color: #ff9a55; }
+.login-submit:hover { background: var(--brand-teal-dark); }
+.login-art-overlay { display: none; }
+.login-logo-image { position: absolute; inset: auto 32px 54px auto; z-index: 1; width: clamp(165px, 20vw, 235px); height: auto; object-fit: contain; opacity: 1; border: 1px solid #67ded566; border-radius: 18px; box-shadow: 0 20px 55px #001f2b66; transform: rotate(2deg); }
+.login-art-content { max-width: 365px; }
+.brand-mark { overflow: hidden; }
+.brand-logo-image { width: 48px; height: 48px; object-fit: cover; object-position: center 18%; }
+.public-tournaments-link { min-height: 26px; }
+@media (max-width: 1100px) {
+  .login-logo-image { right: 24px; bottom: 48px; width: 150px; }
+  .login-art-content { max-width: 255px; }
+}
+@media (max-width: 900px) {
+  .login-logo-image { width: 125px; right: 20px; bottom: 42px; }
+  .login-art-content { max-width: 220px; }
+}

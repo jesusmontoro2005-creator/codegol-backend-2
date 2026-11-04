@@ -1,0 +1,30 @@
+/* Pestañas del portal público: tabla general, calendario y goleadores (HU-06). */
+.public-page { --pub-border: #e2e9e7; --pub-soft: #f1f7f6; --pub-text: #25303a; --pub-muted: #6d7a82; --pub-teal: #0a9290; --pub-card: #fff; }
+.public-page[data-theme='dark'] { --pub-border: #354541; --pub-soft: #253532; --pub-text: #e7f0ed; --pub-muted: #9fb0aa; --pub-teal: #62d6cf; --pub-card: #1e2c2a; }
+.pub-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--pub-border); margin-bottom: 18px; overflow-x: auto; }
+.pub-tabs button { border: 0; background: transparent; color: var(--pub-muted); font: 700 14px 'DM Sans', sans-serif; padding: 12px 16px; cursor: pointer; border-bottom: 3px solid transparent; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.pub-tabs button.active { color: var(--pub-teal); border-bottom-color: var(--pub-teal); }
+.pub-table-wrap { overflow-x: auto; border: 1px solid var(--pub-border); border-radius: 12px; background: var(--pub-card); }
+.pub-table { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--pub-text); }
+.pub-table th { text-align: center; font-size: 11px; letter-spacing: .8px; text-transform: uppercase; color: var(--pub-muted); padding: 11px 9px; background: var(--pub-soft); }
+.pub-table th:nth-child(2), .pub-table td.pub-team { text-align: left; }
+.pub-table td { text-align: center; padding: 11px 9px; border-top: 1px solid var(--pub-border); font-variant-numeric: tabular-nums; }
+.pub-table td.pub-team { font-weight: 700; }
+.pub-table tr.lider td { background: color-mix(in srgb, var(--pub-teal) 9%, transparent); }
+.pub-pos { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--pub-soft); font-weight: 800; font-size: 13px; }
+tr.lider .pub-pos { background: var(--pub-teal); color: #fff; }
+.pub-jornadas { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.pub-jornadas button { border: 1px solid var(--pub-border); background: var(--pub-card); color: var(--pub-text); border-radius: 18px; padding: 7px 15px; font: 700 13px 'DM Sans', sans-serif; cursor: pointer; }
+.pub-jornadas button.active { background: var(--pub-teal); border-color: var(--pub-teal); color: #fff; }
+.pub-matches { display: flex; flex-direction: column; gap: 10px; }
+.pub-match { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 14px; align-items: center; background: var(--pub-card); border: 1px solid var(--pub-border); border-radius: 12px; padding: 14px 16px; color: var(--pub-text); }
+.pub-when { display: flex; flex-direction: column; font-size: 13px; color: var(--pub-muted); text-transform: capitalize; }
+.pub-when b { font: 800 20px Manrope, sans-serif; color: var(--pub-text); }
+.pub-vs { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-weight: 700; }
+.pub-vs i { font-style: normal; font-size: 11px; color: var(--pub-muted); }
+.pub-score { background: var(--pub-soft); border-radius: 8px; padding: 4px 12px; font-family: Manrope, sans-serif; }
+.pub-field { color: var(--pub-teal); font-weight: 600; font-size: 13px; white-space: nowrap; }
+@media (max-width: 640px) { .pub-match { grid-template-columns: 1fr; gap: 8px; } }
+
+.public-updated{margin:10px 0 0;font-size:12px;color:#818397;display:flex;align-items:center;gap:6px}
+.public-selector-row{flex-wrap:wrap;gap:12px}

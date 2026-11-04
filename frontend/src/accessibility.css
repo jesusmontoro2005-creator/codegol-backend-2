@@ -1,0 +1,74 @@
+/* Escala de lectura del panel. Se carga al final para ajustar textos fijados en px. */
+.admin-shell .nav-link { font-size: 15px !important; }
+.admin-shell .nav-label { font-size: 12px !important; }
+.admin-shell .club-copy b,
+.admin-shell .profile-copy b { font-size: 14px !important; }
+.admin-shell .club-copy small,
+.admin-shell .profile-copy small,
+.admin-shell .today-label,
+.admin-shell .breadcrumb { font-size: 12px !important; }
+.admin-shell .welcome-row h1 { font-size: clamp(30px, 2.4vw, 38px) !important; }
+.admin-shell .welcome-row p { font-size: 15px !important; }
+.admin-shell .welcome-kicker,
+.admin-shell .section-eyebrow { font-size: 12px !important; }
+.admin-shell .section-heading h2 { font-size: 19px !important; }
+.admin-shell .metric-card p { font-size: 14px !important; }
+.admin-shell .metric-card > strong { font-size: 25px !important; }
+.admin-shell .metric-change { font-size: 12px !important; }
+.admin-shell .match-time b { font-size: 18px !important; }
+.admin-shell .match-time span,
+.admin-shell .match-league,
+.admin-shell .match-field,
+.admin-shell .match-teams b { font-size: 12px !important; }
+.admin-shell .text-action,
+.admin-shell .schedule-cta,
+.admin-shell .chart-legend > span,
+.admin-shell .chart-legend > button,
+.admin-shell .activity-row > div b,
+.admin-shell .activity-row > div small,
+.admin-shell .activity-row time,
+.admin-shell .activity-footer,
+.admin-shell .result-filters button,
+.admin-shell .export-button,
+.admin-shell .results-table td,
+.admin-shell .result-match b,
+.admin-shell .page-footer { font-size: 12px !important; }
+.admin-shell .results-table th,
+.admin-shell .status-pill,
+.admin-shell .league-pill,
+.admin-shell .result-score { font-size: 11px !important; }
+.admin-shell .primary-button { font-size: 14px !important; }
+.admin-shell .field-card-content > small,
+.admin-shell .quick-summary footer { font-size: 12px !important; }
+.admin-shell .sidebar-footer,
+.admin-shell .sidebar-help small { font-size: 10px !important; }
+
+.login-heading h1 { font-size: 38px !important; }
+.login-heading p,
+.login-input-wrap input { font-size: 17px !important; }
+.login-form label { font-size: 16px !important; }
+.login-submit { font-size: 17px !important; }
+.demo-hint { font-size: 14px !important; }
+.login-art-content h2 { font-size: clamp(38px, 4vw, 52px) !important; }
+.login-art-content > p { font-size: 17px !important; }
+
+.players-heading h1 { font-size: 34px !important; }
+.players-heading p,
+.players-toolbar > div p { font-size: 15px !important; }
+.players-toolbar h2,
+.player-form-heading h2 { font-size: 20px !important; }
+.player-card h3 { font-size: 16px !important; }
+.player-card-content > p,
+.player-form-grid label { font-size: 14px !important; }
+.player-form-grid input,
+.player-form-grid select,
+.players-search input { font-size: 15px !important; }
+.player-card-actions button,
+.player-cancel-button { font-size: 13px !important; }
+
+@media (max-width: 760px) {
+  .login-heading h1 { font-size: 32px !important; }
+  .admin-shell .welcome-row h1 { font-size: 28px !important; }
+  .admin-shell .match-teams b { font-size: 11px !important; }
+  .admin-shell .result-filters button { font-size: 11px !important; }
+}

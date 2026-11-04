@@ -1,0 +1,2 @@
+.theme-toggle{width:34px;min-width:34px;height:34px;padding:0;display:grid;place-items:center;flex:none;color:#77798e;line-height:1}
+.admin-shell[data-theme='dark'] .topbar-divider{background:#414158}

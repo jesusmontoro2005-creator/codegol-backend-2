@@ -1,0 +1,1119 @@
+.dashboard {
+    color: #27283e
+}
+
+.welcome-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px
+}
+
+.welcome-kicker,
+.section-eyebrow {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.05px;
+    color: #a0a1b1
+}
+
+.welcome-kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px
+}
+
+.welcome-line {
+    width: 18px;
+    height: 2px;
+    background: #0FAEAA;
+    border-radius: 2px
+}
+
+.welcome-row h1 {
+    font: 800 24px/1.25 Manrope, sans-serif;
+    letter-spacing: -.65px;
+    margin: 8px 0 6px
+}
+
+.welcome-row h1 span {
+    font-size: 21px
+}
+
+.welcome-row p {
+    font-size: 11px;
+    color: #9698aa;
+    margin: 0
+}
+
+.primary-button {
+    height: 36px;
+    padding: 0 13px;
+    background: #0FAEAA;
+    color: #fff;
+    border: 0;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px #0FAEAA26
+}
+
+.primary-button:hover {
+    background: #5447d8
+}
+
+.primary-button i {
+    font-size: 10px
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 19px
+}
+
+.metric-card,
+.matches-card,
+.chart-card,
+.activity-card,
+.results-card,
+.quick-summary {
+    background: #fff;
+    border: 1px solid #eeeef4;
+    border-radius: 10px
+}
+
+.metric-card {
+    height: 126px;
+    padding: 15px 16px;
+    position: relative
+}
+
+.metric-icon {
+    height: 31px;
+    width: 31px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 11px
+}
+
+.metric-icon.teal {
+    background: #E5F8F5;
+    color: #0FAEAA
+}
+
+.metric-icon.blue {
+    background: #eaf3ff;
+    color: #4f91e8
+}
+
+.metric-icon.green {
+    background: #e7f7ef;
+    color: #32a977
+}
+
+.metric-icon.orange {
+    background: #fff2e7;
+    color: #e89543
+}
+
+.metric-menu {
+    position: absolute;
+    right: 15px;
+    top: 16px;
+    color: #c3c4d0;
+    font-size: 12px
+}
+
+.metric-card p {
+    font-size: 10px;
+    color: #8d8fa2;
+    margin: 0 0 2px
+}
+
+.metric-card>strong {
+    font: 700 20px/1.3 Manrope, sans-serif;
+    letter-spacing: -.5px;
+    color: #292a40
+}
+
+.metric-change {
+    position: absolute;
+    right: 14px;
+    bottom: 17px;
+    font-size: 8px;
+    color: #45ac7b;
+    display: flex;
+    align-items: center;
+    gap: 3px
+}
+
+.metric-change i {
+    font-size: 8px
+}
+
+.dashboard-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(220px, .82fr);
+    gap: 15px;
+    margin-bottom: 15px
+}
+
+.matches-card {
+    padding: 17px 18px 12px
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between
+}
+
+.section-heading h2 {
+    font: 700 15px/1.4 Manrope, sans-serif;
+    letter-spacing: -.35px;
+    margin: 3px 0 0;
+    color: #292a40
+}
+
+.section-eyebrow {
+    font-size: 8px;
+    letter-spacing: .85px
+}
+
+.text-action {
+    background: none;
+    border: 0;
+    color: #0FAEAA;
+    font-size: 9px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 0 0 2px
+}
+
+.text-action i {
+    font-size: 9px
+}
+
+.match-list {
+    margin-top: 11px
+}
+
+.match-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 61px;
+    border-top: 1px solid #f1f1f5
+}
+
+.match-time {
+    width: 57px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+}
+
+.match-time b {
+    font: 700 14px Manrope, sans-serif;
+    color: #34354a
+}
+
+.match-time span {
+    font-size: 7px;
+    color: #a1a2b2;
+    letter-spacing: .35px
+}
+
+.match-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1
+}
+
+.match-league-dot {
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    flex: none
+}
+
+.match-league-dot.teal {
+    background: #7567ed
+}
+
+.match-league-dot.blue {
+    background: #4a9ae9
+}
+
+.match-league-dot.orange {
+    background: #e99a4d
+}
+
+.match-teams {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    white-space: nowrap
+}
+
+.match-teams b {
+    font-size: 9px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.match-vs {
+    color: #b7b8c4;
+    font-size: 7px
+}
+
+.match-league {
+    font-size: 8px;
+    color: #9a9bad;
+    white-space: nowrap
+}
+
+.match-field {
+    font-size: 8px;
+    color: #9092a4;
+    white-space: nowrap
+}
+
+.match-field i {
+    font-size: 9px;
+    color: #b1b2c0
+}
+
+.row-more {
+    font-size: 11px;
+    padding: 5px
+}
+
+.schedule-cta {
+    width: 100%;
+    height: 30px;
+    margin-top: 7px;
+    border: 1px solid #edecf8;
+    background: #fafaff;
+    color: #0FAEAA;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer
+}
+
+.schedule-cta>i:first-child {
+    font-size: 11px
+}
+
+.schedule-cta>i:last-child {
+    font-size: 9px;
+    margin-left: 2px
+}
+
+.right-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 11px
+}
+
+.field-card {
+    height: 128px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(125deg, #29294f, #38366c);
+    color: #fff;
+    padding: 14px 15px
+}
+
+.field-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2
+}
+
+.field-card-top>.pi {
+    font-size: 11px;
+    color: #b2afe8
+}
+
+.live-indicator {
+    font-size: 7px;
+    letter-spacing: .8px;
+    color: #cac9e8;
+    display: flex;
+    align-items: center;
+    gap: 6px
+}
+
+.live-indicator i {
+    width: 6px;
+    height: 6px;
+    background: #51d697;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #51d69727
+}
+
+.field-card-content {
+    position: relative;
+    z-index: 2;
+    margin-top: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start
+}
+
+.field-card-content>span,
+.quick-summary>span {
+    font-size: 7px;
+    letter-spacing: .8px;
+    color: #bebddd
+}
+
+.field-card-content>b {
+    font: 700 24px/1.1 Manrope, sans-serif;
+    margin: 4px 0 7px
+}
+
+.field-card-content>b small {
+    font-size: 12px;
+    color: #b9b7d8;
+    font-weight: 500
+}
+
+.field-progress {
+    height: 4px;
+    width: 100%;
+    background: #55547a;
+    border-radius: 4px;
+    margin: 0 0 6px
+}
+
+.field-progress i {
+    display: block;
+    width: 60%;
+    height: 100%;
+    background: #8c81fb;
+    border-radius: 4px
+}
+
+.field-card-content>small {
+    font-size: 8px;
+    color: #c8c7df
+}
+
+.field-card-decoration {
+    position: absolute;
+    right: -22px;
+    bottom: -64px;
+    width: 146px;
+    height: 146px;
+    border: 1px solid #ffffff12;
+    border-radius: 50%
+}
+
+.field-card-decoration:before {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px solid #ffffff12;
+    border-radius: 50%
+}
+
+.field-card-decoration i {
+    position: absolute;
+    left: 0;
+    top: 48px;
+    width: 31px;
+    height: 49px;
+    border: 1px solid #ffffff12;
+    border-left: 0;
+    border-radius: 0 24px 24px 0;
+    font-size: 0
+}
+
+.field-card-decoration i:last-child {
+    left: 57px;
+    top: 58px;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%
+}
+
+.quick-summary {
+    height: 104px;
+    padding: 13px 14px
+}
+
+.quick-summary>span {
+    color: #a3a4b3;
+    font-size: 7px;
+    font-weight: 700
+}
+
+.quick-summary>div {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 5px 0 6px;
+    position: relative
+}
+
+.quick-summary>div b {
+    font: 700 21px Manrope, sans-serif
+}
+
+.quick-summary>div small {
+    font-size: 9px;
+    color: #989aab
+}
+
+.quick-summary>div i {
+    position: absolute;
+    right: 3px;
+    top: 5px;
+    color: #51b884;
+    font-size: 14px
+}
+
+.quick-summary footer {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #f0f0f5;
+    padding-top: 7px;
+    font-size: 8px;
+    color: #9294a5
+}
+
+.dashboard-lower-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(240px, 1fr);
+    gap: 15px;
+    margin-bottom: 15px
+}
+
+.chart-card,
+.activity-card {
+    padding: 16px 18px 13px;
+    min-width: 0
+}
+
+.chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 13px
+}
+
+.chart-legend>span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 8px;
+    color: #9294a6;
+    white-space: nowrap
+}
+
+.legend-dot {
+    height: 6px;
+    width: 6px;
+    border-radius: 50%
+}
+
+.legend-dot.primary {
+    background: #0FAEAA
+}
+
+.legend-dot.pale {
+    background: #A8E4DF
+}
+
+.chart-legend>button {
+    margin-left: auto;
+    border: 1px solid #eeeef4;
+    background: #fff;
+    border-radius: 5px;
+    padding: 6px 8px;
+    color: #77798d;
+    font-size: 8px;
+    white-space: nowrap
+}
+
+.chart-legend>button i {
+    font-size: 8px;
+    margin-left: 5px
+}
+
+.chart-area {
+    height: 147px;
+    display: flex;
+    margin-top: 12px
+}
+
+.chart-y-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 8px 17px 0;
+    font-size: 7px;
+    color: #adafbd
+}
+
+.chart-plot {
+    position: relative;
+    flex: 1;
+    min-width: 0
+}
+
+.chart-grid {
+    position: absolute;
+    inset: 0 0 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between
+}
+
+.chart-grid i {
+    border-top: 1px dashed #eeeff4
+}
+
+.chart-plot svg {
+    position: absolute;
+    inset: 0 0 18px;
+    width: 100%;
+    height: calc(100% - 18px);
+    overflow: visible
+}
+
+.chart-x-labels {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7px;
+    color: #adafbd
+}
+
+.activity-card .section-heading {
+    margin-bottom: 7px
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column
+}
+
+.activity-row {
+    min-height: 49px;
+    border-top: 1px solid #f1f1f5;
+    display: flex;
+    align-items: center;
+    gap: 9px
+}
+
+.activity-icon {
+    height: 26px;
+    width: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    font-size: 11px;
+    flex: none
+}
+
+.activity-icon.green {
+    background: #eaf8f0;
+    color: #3caa78
+}
+
+.activity-icon.blue {
+    background: #eaf3ff;
+    color: #528fdf
+}
+
+.activity-icon.orange {
+    background: #fff3e7;
+    color: #e39945
+}
+
+.activity-row>div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0
+}
+
+.activity-row>div b {
+    font-size: 8px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.activity-row>div small {
+    font-size: 7px;
+    color: #999bac;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.activity-row time {
+    font-size: 7px;
+    color: #a7a8b6;
+    white-space: nowrap
+}
+
+.activity-footer {
+    border-top: 1px solid #f1f1f5;
+    padding-top: 9px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 8px;
+    color: #9698a9
+}
+
+.activity-footer .online-dot {
+    height: 5px;
+    width: 5px
+}
+
+.results-card {
+    padding: 16px 18px 0
+}
+
+.results-card>.section-heading {
+    margin-bottom: 12px
+}
+
+.results-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px
+}
+
+.result-filters {
+    display: flex;
+    align-items: center;
+    gap: 4px
+}
+
+.result-filters button {
+    border: 0;
+    background: transparent;
+    color: #9799a9;
+    font-size: 8px;
+    padding: 6px 9px;
+    border-radius: 5px;
+    cursor: pointer
+}
+
+.result-filters button.active {
+    background: #E5F8F5;
+    color: #0FAEAA;
+    font-weight: 600
+}
+
+.export-button {
+    border: 1px solid #ececf3;
+    background: #fff;
+    border-radius: 5px;
+    color: #737589;
+    font-size: 8px;
+    padding: 6px 9px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer
+}
+
+.export-button i {
+    font-size: 9px
+}
+
+.results-table-wrap {
+    overflow-x: auto
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 610px
+}
+
+.results-table thead {
+    background: #fafafd
+}
+
+.results-table th {
+    text-align: left;
+    padding: 8px 9px;
+    color: #a3a4b3;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .55px
+}
+
+.results-table th:first-child {
+    padding-left: 11px
+}
+
+.results-table td {
+    height: 39px;
+    border-top: 1px solid #f0f0f5;
+    padding: 5px 9px;
+    color: #8c8ea1;
+    font-size: 8px
+}
+
+.result-match {
+    display: flex;
+    align-items: center;
+    gap: 7px
+}
+
+.result-match b {
+    font-weight: 600;
+    color: #494a5e;
+    font-size: 8px
+}
+
+.result-score {
+    background: #f4f4f8;
+    border-radius: 4px;
+    padding: 4px 6px;
+    color: #43445a;
+    font-size: 8px;
+    font-weight: 700;
+    white-space: nowrap
+}
+
+.league-pill {
+    background: #f2f1ff;
+    color: #7165dc;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 7px;
+    white-space: nowrap
+}
+
+.status-pill {
+    background: #eaf8f0;
+    color: #39a675;
+    border-radius: 9px;
+    padding: 4px 7px;
+    font-size: 7px;
+    white-space: nowrap
+}
+
+.status-pill i {
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    background: #42b681;
+    border-radius: 50%;
+    margin-right: 3px
+}
+
+.results-table td:last-child {
+    text-align: right
+}
+
+.results-table td:last-child .row-more {
+    padding-right: 4px
+}
+
+.page-footer {
+    display: flex;
+    justify-content: space-between;
+    color: #aaaaba;
+    font-size: 8px;
+    padding: 13px 1px 0
+}
+
+.page-footer .pi {
+    color: #ee8194;
+    font-size: 8px;
+    margin-left: 3px
+}
+
+@media(max-width:1180px) {
+    .match-league {
+        display: none
+    }
+
+    .match-teams b {
+        font-size: 8px
+    }
+
+    .metric-card {
+        padding-inline: 12px
+    }
+
+    .metric-change {
+        font-size: 7px
+    }
+
+    .dashboard-main-grid {
+        grid-template-columns: minmax(0, 1.55fr) minmax(200px, .8fr)
+    }
+}
+
+@media(max-width:980px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .metric-card {
+        height: 118px
+    }
+
+    .dashboard-main-grid {
+        grid-template-columns: minmax(0, 1.5fr) minmax(190px, .8fr)
+    }
+
+    .dashboard-lower-grid {
+        grid-template-columns: 1fr
+    }
+
+    .chart-area {
+        height: 170px
+    }
+
+    .activity-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px
+    }
+
+    .activity-row {
+        border-bottom: 1px solid #f1f1f5
+    }
+
+    .activity-footer {
+        margin-top: 6px
+    }
+}
+
+@media(max-width:700px) {
+    .welcome-row {
+        align-items: flex-start;
+        gap: 12px
+    }
+
+    .welcome-row h1 {
+        font-size: 21px
+    }
+
+    .welcome-row p {
+        font-size: 10px;
+        max-width: 280px
+    }
+
+    .welcome-row .primary-button {
+        font-size: 0;
+        width: 36px;
+        padding: 0;
+        justify-content: center;
+        flex: none;
+        margin-top: 17px
+    }
+
+    .welcome-row .primary-button i {
+        font-size: 12px
+    }
+
+    .dashboard-main-grid {
+        grid-template-columns: 1fr
+    }
+
+    .right-rail {
+        display: grid;
+        grid-template-columns: 1fr 1fr
+    }
+
+    .field-card {
+        height: 128px
+    }
+
+    .quick-summary {
+        height: 128px;
+        padding-top: 20px
+    }
+
+    .quick-summary>div {
+        margin-top: 12px
+    }
+
+    .match-field {
+        display: none
+    }
+
+    .match-row {
+        gap: 9px
+    }
+
+    .match-time {
+        width: 53px
+    }
+
+    .match-details {
+        gap: 6px
+    }
+
+    .dashboard-lower-grid {
+        grid-template-columns: 1fr
+    }
+
+    .activity-list {
+        grid-template-columns: 1fr
+    }
+
+    .activity-row {
+        min-height: 46px
+    }
+
+    .results-card {
+        padding-inline: 12px
+    }
+
+    .results-toolbar {
+        gap: 5px
+    }
+
+    .result-filters {
+        gap: 0
+    }
+
+    .result-filters button {
+        padding: 6px 6px;
+        font-size: 7px
+    }
+
+    .export-button {
+        font-size: 0
+    }
+
+    .export-button i {
+        font-size: 11px
+    }
+
+    .page-footer {
+        font-size: 7px;
+        gap: 10px
+    }
+
+    .page-footer span:last-child {
+        white-space: nowrap
+    }
+}
+
+@media(max-width:420px) {
+    .welcome-row h1 {
+        font-size: 19px
+    }
+
+    .welcome-row p {
+        max-width: 240px
+    }
+
+    .metrics-grid {
+        gap: 9px
+    }
+
+    .metric-card {
+        height: 112px;
+        padding: 12px
+    }
+
+    .metric-card>strong {
+        font-size: 18px
+    }
+
+    .metric-change {
+        right: 8px;
+        bottom: 13px;
+        font-size: 6px
+    }
+
+    .metric-icon {
+        margin-bottom: 8px
+    }
+
+    .matches-card,
+    .chart-card,
+    .activity-card {
+        padding-inline: 12px
+    }
+
+    .match-teams b {
+        font-size: 7px
+    }
+
+    .match-teams {
+        gap: 4px
+    }
+
+    .match-time {
+        width: 48px
+    }
+
+    .match-time b {
+        font-size: 13px
+    }
+
+    .chart-legend {
+        gap: 8px
+    }
+
+    .chart-legend>span {
+        font-size: 7px
+    }
+
+    .chart-legend>button {
+        font-size: 7px;
+        padding: 6px 5px
+    }
+
+    .chart-area {
+        height: 132px
+    }
+
+    .result-filters button {
+        font-size: 6px;
+        padding-inline: 5px
+    }
+
+    .page-footer span:last-child {
+        display: none
+    }
+}

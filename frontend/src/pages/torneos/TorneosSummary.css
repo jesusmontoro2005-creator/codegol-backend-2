@@ -1,0 +1,13 @@
+.tournament-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 16px}
+.tournament-summary article{min-height:81px;display:grid;grid-template-columns:35px 1fr;grid-template-rows:auto auto;align-content:center;column-gap:10px;row-gap:3px;background:#fff;border:1px solid #e8ecee;border-radius:9px;padding:12px}
+.tournament-summary article>i{grid-row:span 2;align-self:center;width:34px;height:34px;border-radius:9px;background:#e7f7f4;color:#0a898a;display:grid;place-items:center;font-size:14px}
+.tournament-summary article:nth-child(2)>i{background:#fff1e5;color:#d77b37}
+.tournament-summary article:nth-child(3)>i{background:#edf3fa;color:#507da3}
+.tournament-summary article:nth-child(4)>i{background:#f2effb;color:#8174bd}
+.tournament-summary article>span{font-size:11px;color:#818694}
+.tournament-summary article>b{font:700 18px Manrope,sans-serif;color:#2d3042}
+.admin-shell[data-theme='dark'] .tournament-summary article{background:#252538;border-color:#38384e}
+.admin-shell[data-theme='dark'] .tournament-summary article>b{color:#f1f1fa}
+@media(max-width:900px){.tournament-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.tournament-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.tournament-links a{display:inline-flex;align-items:center;gap:7px;border:1px solid #dce7e5;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:600;color:#267d7c;text-decoration:none}.admin-shell[data-theme='dark'] .tournament-links a{border-color:#414158;color:#8ee6df}
