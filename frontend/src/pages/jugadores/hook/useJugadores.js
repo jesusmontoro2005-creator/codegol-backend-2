@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import useDatos from '../../../hooks/useDatos'
-import { crearJugador, editarJugador, eliminarJugador, listarJugadores, obtenerSuspensiones } from '../../../database/servicios'
+import { crearJugadorConHuella, editarJugador, eliminarJugador, listarJugadores, obtenerSuspensiones, registrarHuella } from '../../../database/servicios'
+import { capturarMuestraHuella } from '../../../services/fingerprintReader'
 import { obtenerEquipos, obtenerTorneos } from '../../torneos/hook/torneos'
 import { buscarJugadores, validarJugador } from './jugador'
 
@@ -19,20 +20,48 @@ export default function useJugadores() {
   const [formularioAbierto, setFormularioAbierto] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [capturasHuella, setCapturasHuella] = useState([])
+  const [dedo, setDedo] = useState('INDICE_DER')
+  const [capturandoHuella, setCapturandoHuella] = useState(false)
+  const [estadoHuella, setEstadoHuella] = useState('')
 
   const jugadoresVisibles = useMemo(() => buscarJugadores(datos.jugadores, busqueda, filtroEquipo), [datos.jugadores, busqueda, filtroEquipo])
   const idsSuspendidos = useMemo(() => new Set(datos.suspendidos.map((s) => s.jugadorId)), [datos.suspendidos])
 
   function cambiarCampo(event) { const { name, value } = event.target; setFormulario((actual) => ({ ...actual, [name]: value })) }
-  function abrirFormulario(jugador = null) { setJugadorEnEdicion(jugador); setFormulario(jugador ? { ...formularioVacio, ...jugador } : { ...formularioVacio, equipoId: filtroEquipo }); setMensaje(''); setFormularioAbierto(true) }
-  function cerrarFormulario() { setFormularioAbierto(false); setJugadorEnEdicion(null); setFormulario(formularioVacio); setMensaje('') }
+  function abrirFormulario(jugador = null) { setJugadorEnEdicion(jugador); setFormulario(jugador ? { ...formularioVacio, ...jugador } : { ...formularioVacio, equipoId: filtroEquipo }); setMensaje(''); setCapturasHuella([]); setDedo('INDICE_DER'); setEstadoHuella(''); setFormularioAbierto(true) }
+  function cerrarFormulario() { setFormularioAbierto(false); setJugadorEnEdicion(null); setFormulario(formularioVacio); setCapturasHuella([]); setMensaje(''); setEstadoHuella('') }
+
+  async function capturarHuella() {
+    setCapturandoHuella(true); setMensaje(''); setCapturasHuella([])
+    const imagenes = []
+    try {
+      for (let intento = 1; intento <= 3; intento += 1) {
+        setEstadoHuella(`Captura ${intento} de 3: coloca el mismo dedo en el lector.`)
+        const { sample } = await capturarMuestraHuella()
+        imagenes.push(sample.Data)
+        setCapturasHuella([...imagenes])
+      }
+      setEstadoHuella('Tres capturas listas. Al guardar, el backend registrará al jugador y su huella.')
+    } catch (e) {
+      setCapturasHuella([])
+      setEstadoHuella('No se completaron las capturas.')
+      setMensaje(e.message)
+    } finally { setCapturandoHuella(false) }
+  }
 
   async function guardarJugador(event) {
     event.preventDefault()
     setGuardando(true)
     try {
       const limpio = validarJugador(formulario, datos.jugadores, jugadorEnEdicion?.id)
-      if (jugadorEnEdicion) await editarJugador(jugadorEnEdicion.id, limpio); else await crearJugador(limpio)
+      if (!jugadorEnEdicion && capturasHuella.length !== 3) throw new Error('Captura tres veces la huella antes de registrar al jugador.')
+      if (jugadorEnEdicion) {
+        await editarJugador(jugadorEnEdicion.id, limpio)
+        if (capturasHuella.length === 3) await registrarHuella(jugadorEnEdicion.id, { dedo, imagenes: capturasHuella })
+      } else {
+        await crearJugadorConHuella({ ...limpio, dedo, imagenes: capturasHuella })
+      }
       cerrarFormulario(); recargar()
     } catch (e) { setMensaje(e.message) } finally { setGuardando(false) }
   }
@@ -42,5 +71,5 @@ export default function useJugadores() {
     try { await eliminarJugador(jugador.id); recargar() } catch (e) { setMensaje(e.message) }
   }
 
-  return { jugadores: datos.jugadores, equipos: datos.equipos, jugadoresVisibles, idsSuspendidos, cargando, error, busqueda, setBusqueda, filtroEquipo, setFiltroEquipo, formulario, formularioAbierto, jugadorEnEdicion, mensaje, guardando, cambiarCampo, abrirFormulario, cerrarFormulario, guardarJugador, quitarJugador, recargar }
+  return { jugadores: datos.jugadores, equipos: datos.equipos, jugadoresVisibles, idsSuspendidos, cargando, error, busqueda, setBusqueda, filtroEquipo, setFiltroEquipo, formulario, formularioAbierto, jugadorEnEdicion, mensaje, guardando, cambiarCampo, abrirFormulario, cerrarFormulario, guardarJugador, quitarJugador, recargar, dedo, setDedo, capturasHuella, capturandoHuella, estadoHuella, capturarHuella }
 }

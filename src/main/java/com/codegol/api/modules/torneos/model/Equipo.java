@@ -3,9 +3,6 @@ package com.codegol.api.modules.torneos.model;
 	import com.codegol.api.common.model.BaseEntity;
 	import jakarta.persistence.Column;
 	import jakarta.persistence.Entity;
-	import jakarta.persistence.FetchType;
-	import jakarta.persistence.JoinColumn;
-	import jakarta.persistence.ManyToOne;
 	import jakarta.persistence.Table;
 	import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,21 +22,27 @@ import lombok.Getter;
 		@Column(nullable = false, length = 100)
 	    private String nombre;
 
-	    @Column(length = 255)
+	    @Column(name = "logo_url", length = 255)
 	    private String logoUrl;
+
+	    @Column(name = "delegado", length = 100)
+	    private String delegado;
 
 	    @Column(name = "nombre_representante", length = 100)
 	    private String nombreRepresentante;
 
+	    @Column(name = "telefono", length = 20)
+	    private String telefono;
+
 	    @Column(name = "telefono_contacto", length = 20)
 	    private String telefonoContacto;
 
-	    @Column(nullable = false)
+	    @Column(name = "pago_inscripcion_cubierto", nullable = false)
 	    @Builder.Default
-	    private boolean pagoInscripcionCubierto = false; // Control de estatus financiero (HU-05)
+	    private boolean pagoInscripcionCubierto = false;
 
-	    @ManyToOne(fetch = FetchType.LAZY)
-	    @JoinColumn(name = "torneo_id", nullable = false)
+	    @jakarta.persistence.ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+	    @jakarta.persistence.JoinColumn(name = "torneo_id", nullable = false)
 	    private Torneo torneo;
 	}
 

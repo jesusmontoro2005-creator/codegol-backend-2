@@ -38,6 +38,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!-- Fingerprint matching (1:1 and 1:N) from sensor images. -->
+		<dependency>
+			<groupId>com.machinezoo.sourceafis</groupId>
+			<artifactId>sourceafis</artifactId>
+			<version>3.18.1</version>
+		</dependency>
 
 		<!-- OpenAPI / Swagger Documentation -->
 		<dependency>

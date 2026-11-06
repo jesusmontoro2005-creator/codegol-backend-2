@@ -118,6 +118,7 @@ CREATE TABLE huellas_biometricas (
   id             INT AUTO_INCREMENT PRIMARY KEY,
   jugador_id     INT NOT NULL UNIQUE,
   plantilla      MEDIUMBLOB NOT NULL,            -- template del SDK del lector
+  motor          VARCHAR(40) NOT NULL DEFAULT 'LEGACY', -- LEGACY o SOURCEAFIS; evita tratar datos demo como huellas reales
   dedo           ENUM('PULGAR_DER','INDICE_DER','MEDIO_DER','PULGAR_IZQ','INDICE_IZQ','MEDIO_IZQ') NOT NULL DEFAULT 'INDICE_DER',
   registrado_por INT NULL,
   registrado_en  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -154,8 +155,11 @@ CREATE TABLE partidos (
   cedula_cerrada_en   DATETIME NULL,
   CHECK (equipo_local_id <> equipo_visitante_id),
   CHECK (hora_fin > hora_inicio),
-  UNIQUE KEY uq_cancha_horario (cancha_id, fecha, hora_inicio),   -- primera barrera anti-traslape
+  -- Los traslapes se validan bajo bloqueo transaccional en el servicio: un índice UNIQUE aquí
+  -- reservaría también horarios de partidos CANCELADOS y no detectaría duraciones que se cruzan.
   KEY idx_partidos_fecha (fecha, cancha_id),
+  KEY idx_partidos_local_fecha (equipo_local_id, fecha),
+  KEY idx_partidos_visitante_fecha (equipo_visitante_id, fecha),
   FOREIGN KEY (jornada_id)          REFERENCES jornadas(id) ON DELETE CASCADE,
   FOREIGN KEY (cancha_id)           REFERENCES canchas(id),
   FOREIGN KEY (equipo_local_id)     REFERENCES equipos(id),

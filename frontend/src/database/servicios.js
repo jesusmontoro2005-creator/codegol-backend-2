@@ -12,9 +12,12 @@ const query = (params = {}) => {
 
 // Jugadores
 export const listarJugadores = (equipoId) => conRespaldo(async () => lista(await apiGet(`jugadores${query({ equipoId })}`)), () => demo.jugadores(equipoId))
-export const crearJugador = (d) => conRespaldo(() => apiPost('jugadores', d), () => demo.crearJugador(d))
+export const crearJugadorConHuella = (d) => apiPost('jugadores/con-huella', d)
 export const editarJugador = (id, d) => conRespaldo(() => apiPut(`jugadores/${id}`, d), () => demo.editarJugador(id, d))
 export const eliminarJugador = (id) => conRespaldo(() => apiDelete(`jugadores/${id}`), () => demo.eliminarJugador(id))
+// Biometría: sin respaldo demo; muestras reales solo se envían al backend.
+export const registrarHuella = (id, datos) => apiPost(`jugadores/${id}/huella`, datos)
+export const identificarHuella = (datos) => apiPost('biometria/identificar', datos)
 
 // Calendario
 export const listarCanchas = () => conRespaldo(async () => lista(await apiGet('canchas')), () => demo.canchas())

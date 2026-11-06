@@ -103,7 +103,6 @@ export default function useTorneos() {
         logoUrl: datos.logoUrl.trim() || null,
         delegado: datos.delegado.trim() || null,
         telefono: datos.telefono.trim() || null,
-        pagoInscripcionCubierto: datos.pagoInscripcionCubierto,
         torneoId: Number(torneoSeleccionado),
       })
       setEquiposInscritos(await obtenerEquiposDeTorneo(torneoSeleccionado))

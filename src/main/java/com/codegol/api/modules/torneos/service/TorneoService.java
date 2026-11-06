@@ -60,21 +60,45 @@ public class TorneoService {
         torneo.setFechaFin(request.getFechaFin());
         torneo.setEstado(request.getEstado() != null ? request.getEstado() : EstadoTorneo.EN_INSCRIPCION);
         torneo.setCategoria(categoria);
+        torneo.setCuotaInscripcion(request.getCuotaInscripcion() != null ? request.getCuotaInscripcion() : java.math.BigDecimal.ZERO);
+        torneo.setCuotaArbitraje(request.getCuotaArbitraje() != null ? request.getCuotaArbitraje() : java.math.BigDecimal.ZERO);
+        torneo.setLimiteAmarillas((byte) (request.getLimiteAmarillas() != null ? request.getLimiteAmarillas() : 3));
 
         Torneo guardado = torneoRepository.save(torneo);
         return mapToTorneoResponse(guardado);
     }
 
+    @Transactional(readOnly = true)
     public List<TorneoResponse> obtenerTodosLosTorneos() {
         return torneoRepository.findAll().stream()
                 .map(this::mapToTorneoResponse)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public TorneoResponse obtenerTorneoPorId(Long id) {
         Torneo torneo = torneoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Torneo no encontrado con ID: " + id));
         return mapToTorneoResponse(torneo);
+    }
+
+    @Transactional
+    public TorneoResponse actualizarTorneo(Long id, TorneoRequest request) {
+        Torneo torneo = torneoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Torneo no encontrado con ID: " + id));
+        if (request.getNombre() != null) torneo.setNombre(request.getNombre());
+        if (request.getDescripcion() != null) torneo.setDescripcion(request.getDescripcion());
+        if (request.getFechaInicio() != null) torneo.setFechaInicio(request.getFechaInicio());
+        if (request.getFechaFin() != null) torneo.setFechaFin(request.getFechaFin());
+        if (request.getEstado() != null) torneo.setEstado(request.getEstado());
+        if (request.getCategoriaId() != null) {
+            torneo.setCategoria(categoriaRepository.findById(request.getCategoriaId())
+                    .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada con ID: " + request.getCategoriaId())));
+        }
+        if (request.getCuotaInscripcion() != null) torneo.setCuotaInscripcion(request.getCuotaInscripcion());
+        if (request.getCuotaArbitraje() != null) torneo.setCuotaArbitraje(request.getCuotaArbitraje());
+        if (request.getLimiteAmarillas() != null) torneo.setLimiteAmarillas(request.getLimiteAmarillas().byteValue());
+        return mapToTorneoResponse(torneoRepository.save(torneo));
     }
 
     // Mapeadores auxiliares
@@ -95,6 +119,9 @@ public class TorneoService {
                 .fechaInicio(t.getFechaInicio())
                 .fechaFin(t.getFechaFin())
                 .estado(t.getEstado())
+                .cuotaInscripcion(t.getCuotaInscripcion())
+                .cuotaArbitraje(t.getCuotaArbitraje())
+                .limiteAmarillas((int) t.getLimiteAmarillas())
                 .categoria(mapToCategoriaDTO(t.getCategoria()))
                 .build();
     }

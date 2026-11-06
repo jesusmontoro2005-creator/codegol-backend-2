@@ -3,6 +3,11 @@ import useJugadores from './hook/useJugadores'
 import { POSICIONES } from './hook/jugador'
 import './Jugadores.css'
 
+const DEDOS = [
+  ['INDICE_DER', 'Índice derecho'], ['PULGAR_DER', 'Pulgar derecho'], ['MEDIO_DER', 'Medio derecho'],
+  ['INDICE_IZQ', 'Índice izquierdo'], ['PULGAR_IZQ', 'Pulgar izquierdo'], ['MEDIO_IZQ', 'Medio izquierdo'],
+]
+
 export default function Jugador() {
   const j = useJugadores()
   const sinHuella = j.jugadores.filter((x) => !x.huella).length
@@ -22,8 +27,12 @@ export default function Jugador() {
         <label>Dorsal<input name="dorsal" inputMode="numeric" maxLength={2} value={j.formulario.dorsal} onChange={j.cambiarCampo} placeholder="Ej. 10" /></label>
         <label>CURP <span>(opcional, evita duplicados)</span><input name="curp" maxLength={18} value={j.formulario.curp} onChange={j.cambiarCampo} placeholder="18 caracteres" style={{ textTransform: 'uppercase' }} /></label>
         <label>Foto (URL) <span>(se muestra al pasar lista)</span><input name="fotoUrl" type="url" value={j.formulario.fotoUrl || ''} onChange={j.cambiarCampo} placeholder="https://…" /></label></div>
-      <p className="mx-muted" style={{ margin: '4px 0 0' }}><i className="pi pi-info-circle" /> La huella dactilar se captura en la terminal de campo (APK con lector) al dar de alta al jugador.</p>
-      {j.mensaje && <p className="player-form-error" role="alert">{j.mensaje}</p>}<div className="player-form-actions"><button type="button" className="player-cancel-button" onClick={j.cerrarFormulario}>Cancelar</button><button type="submit" className="players-add-button" disabled={j.guardando}><i className="pi pi-check" /> {j.guardando ? 'Guardando…' : 'Guardar jugador'}</button></div></form>}
+      <div className="player-biometric-enrollment"><div><strong>Huella del jugador</strong><p>{j.jugadorEnEdicion ? 'Opcional: vuelve a capturar el dedo para reemplazar su registro.' : 'Captura tres veces el mismo dedo; el jugador y su huella se guardarán juntos.'}</p></div>
+        <label>Dedo<select value={j.dedo} onChange={(e) => j.setDedo(e.target.value)} disabled={j.guardando || j.capturandoHuella}>{DEDOS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+        <button type="button" className="players-capture-button" onClick={j.capturarHuella} disabled={j.guardando || j.capturandoHuella}><i className={`pi ${j.capturandoHuella ? 'pi-spin pi-spinner' : 'pi pi-shield'}`} /> {j.capturandoHuella ? `${j.capturasHuella.length}/3 capturas` : j.capturasHuella.length === 3 ? 'Volver a capturar' : 'Capturar huella (3 veces)'}</button>
+        {j.estadoHuella && <p className="player-biometric-status" role="status">{j.estadoHuella}</p>}
+      </div>
+      {j.mensaje && <p className="player-form-error" role="alert">{j.mensaje}</p>}<div className="player-form-actions"><button type="button" className="player-cancel-button" onClick={j.cerrarFormulario} disabled={j.capturandoHuella}>Cancelar</button><button type="submit" className="players-add-button" disabled={j.guardando || j.capturandoHuella || (!j.jugadorEnEdicion && j.capturasHuella.length !== 3)}><i className="pi pi-check" /> {j.guardando ? 'Guardando…' : j.jugadorEnEdicion ? 'Guardar cambios' : 'Registrar jugador y huella'}</button></div></form>}
     {j.cargando && <p className="mx-loading"><i className="pi pi-spin pi-spinner" /> Cargando jugadores…</p>}
     {!j.cargando && (j.jugadoresVisibles.length ? <div className="players-grid">{j.jugadoresVisibles.map((x, index) => <article className="player-card" key={x.id}><div className={`player-avatar player-avatar-${index % 4}`}>{x.fotoUrl ? <img src={x.fotoUrl} alt={`Foto de ${x.nombre}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} /> : `${x.nombre[0]}${x.apellidos?.[0] || ''}`.toUpperCase()}</div><div className="player-card-content"><div className="player-card-top"><span className="player-position">{x.posicion}</span><span className="player-number">#{x.dorsal || '—'}</span></div><h3>{x.nombre} {x.apellidos}</h3><p><i className="pi pi-shield" /> {x.equipo}</p>
         <div className="mx-actions" style={{ gap: 6, marginTop: 6 }}><span className={`mx-chip ${x.huella ? 'ok' : 'warn'}`}><i className={`pi ${x.huella ? 'pi-check' : 'pi-clock'}`} /> {x.huella ? 'Huella registrada' : 'Sin huella'}</span>{j.idsSuspendidos.has(x.id) && <span className="mx-chip bad"><i className="pi pi-ban" /> Suspendido</span>}</div></div>

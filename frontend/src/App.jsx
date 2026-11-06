@@ -39,6 +39,7 @@ export default function App() {
   return <BrowserRouter><Routes>
     <Route path="/" element={<PublicHome />} />
     <Route path="/login" element={<Login />} />
+    <Route path="/registro" element={<Registro />} />
     <Route path="/consulta-publica" element={<PublicHome />} />
     <Route path="/admin" element={<ProtectedAdmin />}>
       <Route index element={<Dashboard />} />

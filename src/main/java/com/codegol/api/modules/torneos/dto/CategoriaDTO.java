@@ -23,6 +23,7 @@ public class CategoriaDTO {
     @Size(max = 50, message = "El nombre no debe exceder 50 caracteres")
     private String nombre;
 
+    @Size(max = 255, message = "La descripción no debe exceder 255 caracteres")
     private String descripcion;
     private boolean activa;
 }

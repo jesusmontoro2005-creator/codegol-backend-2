@@ -13,8 +13,7 @@ export function useModoDemo() {
 
 function sinBackend(error) {
   if (!error.status) return true
-  if ([404, 501, 502, 503, 504].includes(error.status)) return true
-  return error.status === 500 && /^La solicitud falló/.test(error.message)
+  return [404, 501, 502, 503, 504].includes(error.status)
 }
 
 export async function conRespaldo(real, local) {

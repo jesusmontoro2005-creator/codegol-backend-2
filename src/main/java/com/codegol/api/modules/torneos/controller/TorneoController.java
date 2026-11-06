@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,6 +60,11 @@ public class TorneoController {
     @GetMapping("/{id}")
     public ResponseEntity<TorneoResponse> obtenerTorneoPorId(@PathVariable Long id) {
         return ResponseEntity.ok(torneoService.obtenerTorneoPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TorneoResponse> actualizarTorneo(@PathVariable Long id, @RequestBody TorneoRequest request) {
+        return ResponseEntity.ok(torneoService.actualizarTorneo(id, request));
     }
 }
 

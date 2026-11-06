@@ -72,7 +72,7 @@ public class Usuario extends BaseEntity {
 		this.activo = activo;
 	}
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 255)
     private String password;
 
     @Column(name = "nombre_completo", nullable = false, length = 100)

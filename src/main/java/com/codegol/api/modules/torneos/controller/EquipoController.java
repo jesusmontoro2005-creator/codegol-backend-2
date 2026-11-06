@@ -34,4 +34,9 @@ public class EquipoController {
         return ResponseEntity.ok(equipoService.listarTodosLosEquipos());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<EquipoResponse> actualizar(@PathVariable Long id, @RequestBody EquipoRequest request) {
+        return ResponseEntity.ok(equipoService.actualizarEquipo(id, request));
+    }
+
 }

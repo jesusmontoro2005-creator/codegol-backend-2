@@ -14,3 +14,4 @@
 .admin-shell[data-theme='dark'] .register-error{background:#432524;border-color:#6b3a37;color:#ff9c94}
 .admin-shell[data-theme='dark'] .register-success{background:#173a2c;border-color:#2b6049;color:#7be0b3}
 .admin-shell[data-theme='dark'] .register-form-grid input[aria-invalid='true']{border-color:#ff7d74}
+.register-public-page{max-width:950px;margin:42px auto;padding:0 24px}.register-public-page .register-admin-card{max-width:none}.register-back-link{margin:14px 0 0;font-size:13px}.register-back-link a{color:#078f90;text-decoration:none;font-weight:600}.register-back-link a:hover{text-decoration:underline}.register-back-link .pi{margin-right:5px}

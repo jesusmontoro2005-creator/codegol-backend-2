@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { registrarUsuario } from '../../database/auth'
 import { sinEspaciosExtra, validarCorreo, validarNombrePersona, validarPassword, validarUsuario } from '../../utils/validaciones'
 import './Registro.css'
@@ -18,6 +19,8 @@ function validar(f) {
 }
 
 export default function Registro() {
+  const location = useLocation()
+  const registroInicial = location.pathname === '/registro'
   const [form, setForm] = useState(vacio)
   const [errores, setErrores] = useState({})
   const [error, setError] = useState('')
@@ -47,7 +50,9 @@ export default function Registro() {
       setErrores({})
     } catch (registrationError) {
       const message = registrationError.status === 403
-        ? 'El backend rechazó el registro (403). Tu sesión no tiene permiso para registrar usuarios.'
+        ? registroInicial
+          ? 'La cuenta inicial ya existe. Inicia sesión con una cuenta de administrador para registrar otro usuario.'
+          : 'Tu sesión no tiene permiso para registrar usuarios. Inicia sesión como administrador.'
         : registrationError.status === 409
           ? registrationError.message || 'Ese usuario o correo ya está registrado.'
           : registrationError.status
@@ -60,10 +65,10 @@ export default function Registro() {
   const campo = (name) => ({ 'aria-invalid': errores[name] ? 'true' : undefined, 'aria-describedby': errores[name] ? `err-${name}` : undefined })
   const mensaje = (name) => errores[name] && <small className="register-field-error" id={`err-${name}`} role="alert">{errores[name]}</small>
 
-  return <section className="register-admin-page">
-    <header className="register-page-heading"><div><span>ADMINISTRACIÓN · USUARIOS</span><h1>Registrar usuario</h1><p>Crea una cuenta para acceder a CODEGOL.</p></div></header>
+  return <section className={`register-admin-page ${registroInicial ? 'register-public-page' : ''}`}>
+    <header className="register-page-heading"><div><span>{registroInicial ? 'CONFIGURACIÓN INICIAL' : 'ADMINISTRACIÓN · USUARIOS'}</span><h1>{registroInicial ? 'Crear cuenta CODEGOL' : 'Registrar usuario'}</h1><p>{registroInicial ? 'Registra la primera cuenta para comenzar a usar CODEGOL.' : 'Crea una cuenta para acceder a CODEGOL.'}</p></div></header>
     <section className="register-admin-card">
-      <div className="register-notice"><i className="pi pi-info-circle" /><span>La cuenta se enviará al backend CODEGOL con el rol que elijas. Solo el rol Administrador entra al panel web; los árbitros y la mesa de control usan la APK en cancha. Puedes cambiar el rol después en Configuración › Usuarios y permisos.</span></div>
+      <div className="register-notice"><i className="pi pi-info-circle" /><span>{registroInicial ? 'Este formulario crea la primera cuenta del sistema. Una vez creada, las cuentas nuevas solo pueden registrarse desde el panel con una sesión de administrador.' : 'La cuenta se enviará al backend CODEGOL con el rol que elijas. Solo el rol Administrador entra al panel web; los árbitros y la mesa de control usan la APK en cancha. Puedes cambiar el rol después en Configuración › Usuarios y permisos.'}</span></div>
       <form className="register-form" onSubmit={submit} noValidate>
         <div className="register-form-grid">
           <label htmlFor="nombreCompleto">Nombre completo<input id="nombreCompleto" name="nombreCompleto" autoComplete="name" maxLength={100} value={form.nombreCompleto} onChange={update} placeholder="Tu nombre" {...campo('nombreCompleto')} />{mensaje('nombreCompleto')}</label>
@@ -71,12 +76,16 @@ export default function Registro() {
           <label htmlFor="registerEmail">Correo electrónico<input id="registerEmail" name="email" type="email" autoComplete="email" maxLength={100} value={form.email} onChange={update} placeholder="tu@correo.com" {...campo('email')} />{mensaje('email')}</label>
           <label htmlFor="registerPassword">Contraseña<input id="registerPassword" name="password" type="password" autoComplete="new-password" maxLength={72} value={form.password} onChange={update} placeholder="Mínimo 6 caracteres" {...campo('password')} /><small className="register-field-hint">Letras y números, mínimo 6 caracteres.</small>{mensaje('password')}</label>
           <label htmlFor="confirmPassword">Confirma tu contraseña<input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" maxLength={72} value={form.confirmPassword} onChange={update} placeholder="Escríbela de nuevo" {...campo('confirmPassword')} />{mensaje('confirmPassword')}</label>
-          <label htmlFor="rol">Rol<select id="rol" name="rol" value={form.rol} onChange={update}><option value="ROLE_ADMIN">Administrador general</option><option value="ROLE_ARBITRO">Árbitro</option><option value="ROLE_MESA_CONTROL">Mesa de control</option></select></label>
+          {registroInicial
+            ? <label>Rol de la primera cuenta<input value="Administrador general" readOnly /></label>
+            : <label htmlFor="rol">Rol<select id="rol" name="rol" value={form.rol} onChange={update}><option value="ROLE_ADMIN">Administrador general</option><option value="ROLE_ARBITRO">Árbitro</option><option value="ROLE_MESA_CONTROL">Mesa de control</option></select></label>}
         </div>
         {error && <p className="register-error" role="alert"><i className="pi pi-exclamation-circle" />{error}</p>}
         {success && <p className="register-success" role="status"><i className="pi pi-check-circle" />{success}</p>}
+        {success && registroInicial && <p className="register-back-link"><Link to="/login"><i className="pi pi-sign-in" /> Ir al inicio de sesión</Link></p>}
         <div className="register-form-actions"><button className="register-submit" type="submit" disabled={saving}><i className="pi pi-user-plus" />{saving ? 'Registrando…' : 'Registrar usuario'}</button></div>
       </form>
+      {registroInicial && !success && <p className="register-back-link"><Link to="/login"><i className="pi pi-arrow-left" /> Volver al inicio de sesión</Link></p>}
     </section>
   </section>
 }

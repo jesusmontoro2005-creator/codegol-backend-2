@@ -4,6 +4,7 @@ package com.codegol.api.modules.torneos.dto;
 
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import com.codegol.api.modules.torneos.model.EstadoTorneo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +24,8 @@ public class TorneoResponse {
     private LocalDate fechaFin;
     private EstadoTorneo estado;
     private CategoriaDTO categoria;
+    private BigDecimal cuotaInscripcion;
+    private BigDecimal cuotaArbitraje;
+    private Integer limiteAmarillas;
 }
 
