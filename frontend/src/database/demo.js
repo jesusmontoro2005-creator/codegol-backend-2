@@ -93,8 +93,10 @@ export const demo = {
 
   // --- torneos / categorías / equipos (mismos contratos que usaba el front) ---
   categorias: () => clonar(cargar().categorias),
+  cambiarEstadoCategoria(id, activa) { const c = cargar().categorias.find((x) => x.id === Number(id)); if (!c) throw fallo('Categoría no encontrada.', 404); c.activa = Boolean(activa); guardar(); return clonar(c) },
   crearCategoria(datos) { const c = { id: siguiente('categorias'), nombre: datos.nombre, descripcion: datos.descripcion || '', activa: datos.activa !== false }; cargar().categorias.push(c); guardar(); return clonar(c) },
-  torneos: () => clonar(cargar().torneos.map(vistaTorneo)),
+  torneos: () => clonar(cargar().torneos.map((t) => vistaTorneo({ archivado: false, ...t }))),
+  cambiarArchivoTorneo(id, archivado) { const t = cargar().torneos.find((x) => x.id === Number(id)); if (!t) throw fallo('Torneo no encontrado.', 404); if (archivado && t.estado === 'EN_PROGRESO') throw fallo('Finaliza o cancela el torneo antes de archivarlo.', 409); t.archivado = Boolean(archivado); guardar(); return clonar(vistaTorneo(t)) },
   torneo(id) { const t = cargar().torneos.find((x) => x.id === Number(id)); if (!t) throw fallo('Torneo no encontrado.', 404); return clonar(vistaTorneo(t)) },
   crearTorneo(datos) {
     const t = { id: siguiente('torneos'), nombre: datos.nombre, descripcion: datos.descripcion || '', categoriaId: Number(datos.categoriaId), fechaInicio: datos.fechaInicio, fechaFin: datos.fechaFin || null, estado: datos.estado || 'EN_INSCRIPCION', cuotaInscripcion: Number(datos.cuotaInscripcion) || 0, cuotaArbitraje: Number(datos.cuotaArbitraje) || 0, limiteAmarillas: Number(datos.limiteAmarillas) || 3 }
@@ -121,6 +123,19 @@ export const demo = {
     const d = cargar(); const e = d.equipos.find((x) => x.id === Number(id)); if (!e) throw fallo('Equipo no encontrado.', 404)
     if (datos.nombre && d.equipos.some((x) => x.id !== e.id && x.nombre.toLowerCase() === datos.nombre.toLowerCase())) throw fallo('Ya existe otro equipo con ese nombre.', 409)
     Object.assign(e, datos); guardar(); return clonar(e)
+  },
+  eliminarEquipo(id) {
+    const d = cargar(); const equipoId = Number(id)
+    if (!d.equipos.some((x) => x.id === equipoId)) throw fallo('Equipo no encontrado.', 404)
+    const hasHistory = d.partidos.some((p) => p.localId === equipoId || p.visitanteId === equipoId)
+      || d.pagos.some((p) => p.equipoId === equipoId)
+      || d.pases.some((p) => p.equipoId === equipoId)
+      || d.eventos.some((e) => e.equipoId === equipoId)
+    if (hasHistory) throw fallo('No se puede borrar este equipo porque tiene historial de partidos, estadísticas o pagos. El historial debe conservarse.', 409)
+    d.jugadores = d.jugadores.filter((j) => j.equipoId !== equipoId)
+    d.inscripciones = d.inscripciones.filter((i) => i.equipoId !== equipoId)
+    d.equipos = d.equipos.filter((e) => e.id !== equipoId)
+    guardar(); return null
   },
 
   // --- jugadores ---

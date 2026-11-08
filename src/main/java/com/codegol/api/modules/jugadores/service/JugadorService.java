@@ -54,6 +54,8 @@ public class JugadorService {
     @Transactional
     public JugadorResponse editar(long id, JugadorRequest request) {
         Jugador jugador = jugadorRepository.findById(id).orElseThrow(() -> noEncontrado(id));
+        if (!Boolean.TRUE.equals(jugador.getActivo()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El jugador ya fue retirado de la plantilla activa.");
         validarEquipoYUnicidad(request, id);
         aplicar(jugador, request);
         jugadorRepository.saveAndFlush(jugador);
@@ -63,10 +65,16 @@ public class JugadorService {
     @Transactional
     public void eliminar(long id) {
         Jugador jugador = jugadorRepository.findById(id).orElseThrow(() -> noEncontrado(id));
-        if (jugadorRepository.tieneHistorialDePartido(id))
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "No se puede eliminar al jugador porque ya tiene actividad en partidos.");
-        jugadorRepository.delete(jugador);
+        if (Integer.valueOf(1).equals(jugadorRepository.tieneHistorialDePartido(id))) {
+            // Keep the player row referenced by match history, but remove it from active rosters.
+            jugador.setActivo(false);
+            jugador.setDorsal(null);
+            jugador.setCurp(null);
+            jugadorRepository.saveAndFlush(jugador);
+            motorHuellasService.eliminarPlantilla(id);
+        } else {
+            jugadorRepository.delete(jugador);
+        }
     }
 
     private void validarEquipoYUnicidad(JugadorRequest request, Long idActual) {
@@ -109,7 +117,7 @@ public class JugadorService {
     private static JugadorResponse respuesta(JugadorResumen r) {
         return new JugadorResponse(r.getId(), r.getEquipoId(), r.getNombre(), r.getApellidos(),
                 r.getDorsal() == null ? "" : r.getDorsal().toString(), r.getCurp(), r.getFotoUrl(),
-                r.getEquipo(), r.getPosicion(), Boolean.TRUE.equals(r.getHuella()));
+                r.getEquipo(), r.getPosicion(), Integer.valueOf(1).equals(r.getHuella()));
     }
 
     private static String[] separarApellidos(String apellidos) {

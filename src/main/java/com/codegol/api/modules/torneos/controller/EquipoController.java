@@ -39,4 +39,10 @@ public class EquipoController {
         return ResponseEntity.ok(equipoService.actualizarEquipo(id, request));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        equipoService.eliminarEquipo(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

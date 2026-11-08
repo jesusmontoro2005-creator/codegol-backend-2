@@ -10,7 +10,8 @@ La base `codegol_db` se conserva intacta. Los siguientes pasos crean una copia l
 4. Selecciona la nueva base `codegol`, abre la pestaña **SQL** y ejecuta `04_extender_codegol_para_front.sql`.
 5. Ejecuta `06_calendario_indices.sql` sobre `codegol`. Es idempotente y no cambia los partidos ni sus resultados; retira un índice antiguo que impedía reutilizar horarios cancelados y crea índices de consulta.
 6. Ejecuta `07_huellas_sourceafis.sql` sobre `codegol`. Es idempotente; marca los registros biométricos anteriores como heredados para que no se confundan con plantillas capturadas por el motor actual.
-7. Revisa que `codegol` tenga al menos las 16 tablas: `categorias`, `torneos`, `equipos`, `usuarios`, `canchas`, `inscripciones`, `jugadores`, `huellas_biometricas`, `jornadas`, `partidos`, `pase_lista`, `eventos_partido`, `tabla_posiciones`, `suspensiones`, `pagos` y `recibos`.
+7. Ejecuta una sola vez `08_archivo_torneos.sql` sobre `codegol`. Agrega el indicador de archivo y conserva los torneos existentes como no archivados.
+8. Revisa que `codegol` tenga al menos las 16 tablas: `categorias`, `torneos`, `equipos`, `usuarios`, `canchas`, `inscripciones`, `jugadores`, `huellas_biometricas`, `jornadas`, `partidos`, `pase_lista`, `eventos_partido`, `tabla_posiciones`, `suspensiones`, `pagos` y `recibos`.
 
 El clon mantiene las columnas originales de `categorias`, `torneos`, `equipos` y `usuarios`. La migración añade a `torneos` las cuotas, el límite de amarillas y la descripción de hasta 500 caracteres, y habilita el rol `ROLE_MESA_CONTROL`. Los valores copiados se conservan. Las tablas operativas nuevas empiezan vacías, salvo las inscripciones de los equipos ya existentes y tres canchas de ejemplo.
 

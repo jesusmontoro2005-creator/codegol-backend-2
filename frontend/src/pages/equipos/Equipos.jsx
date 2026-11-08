@@ -4,13 +4,15 @@ import ModoDemo from '../../components/ModoDemo'
 import useDatos from '../../hooks/useDatos'
 import { listarJugadores, moneda } from '../../database/servicios'
 import { validarEquipo } from '../../utils/validaciones'
-import { editarEquipo, obtenerEquipos, obtenerEquiposDeTorneo, obtenerTorneos } from '../torneos/hook/torneos'
+import { editarEquipo, eliminarEquipo, obtenerEquipos, obtenerEquiposDeTorneo, obtenerTorneos } from '../torneos/hook/torneos'
 
 export default function Equipos() {
   const [busqueda, setBusqueda] = useState('')
   const [seleccionado, setSeleccionado] = useState(null)
   const [editando, setEditando] = useState(null)
   const [errorEdicion, setErrorEdicion] = useState('')
+  const [errorEliminacion, setErrorEliminacion] = useState('')
+  const [eliminando, setEliminando] = useState(false)
   const { datos, cargando, error, recargar } = useDatos(async () => {
     const [equipos, torneos, jugadores] = await Promise.all([obtenerEquipos(), obtenerTorneos(), listarJugadores()])
     const inscripciones = (await Promise.all(torneos.map(async (t) => (await obtenerEquiposDeTorneo(t.id)).map((e) => ({ ...e, torneo: t }))))).flat()
@@ -35,6 +37,16 @@ export default function Equipos() {
     } catch (e) { setErrorEdicion(e.message) }
   }
 
+  async function quitarEquipo() {
+    if (!equipo) return
+    const texto = `¿Eliminar a ${equipo.nombre}? También se eliminarán sus ${equipo.plantilla.length} jugadores y sus huellas registradas. Se conservarán pagos e historial bloqueando la operación si existen.`
+    if (!window.confirm(texto)) return
+    setEliminando(true); setErrorEliminacion('')
+    try { await eliminarEquipo(equipo.id); setSeleccionado(null); await recargar() }
+    catch (e) { setErrorEliminacion(e.message || 'No se pudo eliminar el equipo.') }
+    finally { setEliminando(false) }
+  }
+
   return <section className="mx-page">
     <header className="mx-head"><div><span className="mx-eyebrow">ADMINISTRACIÓN · EQUIPOS</span><h1>Equipos</h1><p>Consulta equipos, delegados, plantillas y estado de inscripción.</p></div><div className="mx-actions"><button className="mx-btn ghost" onClick={recargar}><i className="pi pi-refresh" /> Actualizar</button><Link className="mx-btn" to="/admin/torneos"><i className="pi pi-user-plus" /> Inscribir equipo</Link></div></header>
     <ModoDemo />
@@ -53,7 +65,8 @@ export default function Equipos() {
       <div className="mx-actions">{e.torneos.length ? e.torneos.map((i) => <span key={i.torneoId} className={`mx-chip ${i.pagoInscripcionCubierto ? 'ok' : 'warn'}`}>{i.torneoNombre} · {i.pagoInscripcionCubierto ? 'Inscrito' : 'Pago pendiente'}</span>) : <span className="mx-chip">Sin torneo</span>}</div>
       <small><i className="pi pi-users" /> {e.plantilla.length} jugadores</small>
     </button>)}</div>
-    {equipo && <section className="mx-card"><div className="mx-card-head"><div><h2>Plantilla de {equipo.nombre}</h2><p className="mx-card-sub" style={{ margin: 0 }}>{equipo.torneos.map((i) => `${i.torneoNombre} (cuota ${moneda(i.torneo.cuotaInscripcion)})`).join(' · ') || 'Aún sin torneo'}</p></div><div className="mx-actions"><button className="mx-btn ghost small" onClick={() => { setErrorEdicion(''); setEditando(equipo) }}><i className="pi pi-pencil" /> Editar equipo</button><Link className="mx-btn ghost small" to="/admin/jugadores"><i className="pi pi-users" /> Administrar jugadores</Link></div></div>
+    {equipo && <section className="mx-card"><div className="mx-card-head"><div><h2>Plantilla de {equipo.nombre}</h2><p className="mx-card-sub" style={{ margin: 0 }}>{equipo.torneos.map((i) => `${i.torneoNombre} (cuota ${moneda(i.torneo.cuotaInscripcion)})`).join(' · ') || 'Aún sin torneo'}</p></div><div className="mx-actions"><button className="mx-btn ghost small" onClick={() => { setErrorEdicion(''); setEditando(equipo) }}><i className="pi pi-pencil" /> Editar equipo</button><Link className="mx-btn ghost small" to="/admin/jugadores"><i className="pi pi-users" /> Administrar jugadores</Link><button className="mx-btn danger small" onClick={quitarEquipo} disabled={eliminando}><i className={`pi ${eliminando ? 'pi-spin pi-spinner' : 'pi-trash'}`} /> {eliminando ? 'Eliminando…' : 'Eliminar equipo'}</button></div></div>
+      {errorEliminacion && <p className="mx-alert error" role="alert"><i className="pi pi-exclamation-circle" />{errorEliminacion}</p>}
       {equipo.plantilla.length ? <div className="mx-table-wrap"><table className="mx-table"><thead><tr><th>#</th><th>JUGADOR</th><th>POSICIÓN</th><th>HUELLA</th></tr></thead><tbody>{equipo.plantilla.map((j) => <tr key={j.id}><td>{j.dorsal || '—'}</td><td><b>{j.nombre} {j.apellidos}</b></td><td>{j.posicion}</td><td><span className={`mx-chip ${j.huella ? 'ok' : 'warn'}`}><i className={`pi ${j.huella ? 'pi-check' : 'pi-clock'}`} /> {j.huella ? 'Registrada' : 'Pendiente'}</span></td></tr>)}</tbody></table></div> : <p className="mx-empty">Este equipo todavía no tiene jugadores.</p>}</section>}
     {editando && <div className="mx-modal-bg" role="dialog" aria-modal="true" aria-label="Editar equipo"><form className="mx-modal" onSubmit={guardarEdicion} noValidate><h2>Editar equipo</h2>
       <div className="mx-form-grid"><label className="mx-field">Nombre<input name="nombre" defaultValue={editando.nombre} required maxLength={100} /></label><label className="mx-field">Delegado<input name="delegado" defaultValue={editando.delegado || ''} maxLength={100} /></label><label className="mx-field">Teléfono<input name="telefono" type="tel" defaultValue={editando.telefono || ''} maxLength={20} /></label><label className="mx-field">Logo (URL)<input name="logoUrl" type="url" defaultValue={editando.logoUrl || ''} placeholder="https://…" /></label></div>

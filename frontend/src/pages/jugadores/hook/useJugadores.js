@@ -67,8 +67,12 @@ export default function useJugadores() {
   }
 
   async function quitarJugador(jugador) {
-    if (!window.confirm(`¿Eliminar a ${jugador.nombre} ${jugador.apellidos}? Esta acción no se puede deshacer.`)) return
-    try { await eliminarJugador(jugador.id); recargar() } catch (e) { setMensaje(e.message) }
+    if (!window.confirm(`¿Quitar a ${jugador.nombre} ${jugador.apellidos} de la plantilla activa? Se borrará su huella; si tiene historial, este se conservará.`)) return
+    try {
+      await eliminarJugador(jugador.id)
+      setMensaje('El jugador se quitó de la plantilla activa. Su historial se conserva y su huella fue eliminada.')
+      await recargar()
+    } catch (e) { setMensaje(e.message) }
   }
 
   return { jugadores: datos.jugadores, equipos: datos.equipos, jugadoresVisibles, idsSuspendidos, cargando, error, busqueda, setBusqueda, filtroEquipo, setFiltroEquipo, formulario, formularioAbierto, jugadorEnEdicion, mensaje, guardando, cambiarCampo, abrirFormulario, cerrarFormulario, guardarJugador, quitarJugador, recargar, dedo, setDedo, capturasHuella, capturandoHuella, estadoHuella, capturarHuella }

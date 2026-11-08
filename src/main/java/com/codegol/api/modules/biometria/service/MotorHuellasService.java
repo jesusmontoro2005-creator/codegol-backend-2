@@ -59,7 +59,7 @@ public class MotorHuellasService {
 
     @Transactional
     public Map<String, Object> registrar(long jugadorId, RegistrarHuellaRequest request, String username) {
-        if (jdbc.queryForObject("SELECT COUNT(*) FROM jugadores WHERE id=?", Integer.class, jugadorId) == 0)
+        if (jdbc.queryForObject("SELECT COUNT(*) FROM jugadores WHERE id=? AND activo=1", Integer.class, jugadorId) == 0)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Jugador no encontrado.");
 
         List<String> templates = new ArrayList<>(request.imagenes().size());
@@ -81,13 +81,18 @@ public class MotorHuellasService {
         return Map.of("registrada", true, "jugadorId", jugadorId, "dedo", request.dedo(), "capturas", templates.size());
     }
 
+    @Transactional
+    public void eliminarPlantilla(long jugadorId) {
+        jdbc.update("DELETE FROM huellas_biometricas WHERE jugador_id=?", jugadorId);
+    }
+
     @Transactional(readOnly = true)
     public IdentificacionHuellaResponse identificar(String encodedImage) {
         FingerprintTemplate probe = templateFromPng(encodedImage);
         FingerprintMatcher matcher = new FingerprintMatcher(probe);
         List<Map<String, Object>> candidates = jdbc.queryForList(
                 "SELECT h.jugador_id AS jugadorId,h.plantilla,j.nombre,j.apellido_paterno AS apellidoPaterno,j.apellido_materno AS apellidoMaterno,e.nombre AS equipo "
-                + "FROM huellas_biometricas h JOIN jugadores j ON j.id=h.jugador_id JOIN equipos e ON e.id=j.equipo_id WHERE h.motor='SOURCEAFIS'");
+                + "FROM huellas_biometricas h JOIN jugadores j ON j.id=h.jugador_id JOIN equipos e ON e.id=j.equipo_id WHERE h.motor='SOURCEAFIS' AND j.activo=1");
         if (candidates.isEmpty()) return noMatch("SIN_HUELLAS_REGISTRADAS");
 
         RankedPlayer best = null;

@@ -4,6 +4,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.codegol.api.modules.torneos.dto.CategoriaDTO;
 import com.codegol.api.modules.torneos.dto.TorneoRequest;
@@ -46,12 +48,27 @@ public class TorneoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<CategoriaDTO> obtenerTodasLasCategorias() {
+        return categoriaRepository.findAllByOrderByNombreAsc().stream().map(this::mapToCategoriaDTO).toList();
+    }
+
+    @Transactional
+    public CategoriaDTO cambiarEstadoCategoria(Long id, boolean activa) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada."));
+        categoria.setActiva(activa);
+        return mapToCategoriaDTO(categoriaRepository.save(categoria));
+    }
+
     // --- MÉTODOS DE TORNEOS ---
 
     @Transactional
     public TorneoResponse crearTorneo(TorneoRequest request) {
         Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada con ID: " + request.getCategoriaId()));
+        if (!categoria.isActiva())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No se pueden crear torneos con una categoría desactivada.");
 
         Torneo torneo = new Torneo();
         torneo.setNombre(request.getNombre());
@@ -70,9 +87,27 @@ public class TorneoService {
 
     @Transactional(readOnly = true)
     public List<TorneoResponse> obtenerTodosLosTorneos() {
-        return torneoRepository.findAll().stream()
+        return torneoRepository.findAllByArchivadoFalseOrderByFechaInicioDesc().stream()
                 .map(this::mapToTorneoResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TorneoResponse> obtenerTodosLosTorneosIncluyendoArchivados() {
+        return torneoRepository.findAllByOrderByFechaInicioDesc().stream()
+                .map(this::mapToTorneoResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public TorneoResponse cambiarEstadoArchivo(Long id, boolean archivado) {
+        Torneo torneo = torneoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Torneo no encontrado."));
+        if (archivado && torneo.getEstado() == EstadoTorneo.EN_PROGRESO)
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Finaliza o cancela el torneo antes de archivarlo.");
+        torneo.setArchivado(archivado);
+        return mapToTorneoResponse(torneoRepository.save(torneo));
     }
 
     @Transactional(readOnly = true)
@@ -119,6 +154,7 @@ public class TorneoService {
                 .fechaInicio(t.getFechaInicio())
                 .fechaFin(t.getFechaFin())
                 .estado(t.getEstado())
+                .archivado(t.isArchivado())
                 .cuotaInscripcion(t.getCuotaInscripcion())
                 .cuotaArbitraje(t.getCuotaArbitraje())
                 .limiteAmarillas((int) t.getLimiteAmarillas())

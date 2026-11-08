@@ -11,9 +11,12 @@ import com.codegol.api.modules.torneos.repository.InscripcionRepository;
 import com.codegol.api.modules.torneos.repository.TorneoRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +25,14 @@ public class EquipoService {
     private final EquipoRepository equipoRepository;
     private final TorneoRepository torneoRepository;
     private final InscripcionRepository inscripcionRepository;
+    private final JdbcTemplate jdbc;
 
     @Transactional
     public EquipoResponse registrarEquipo(EquipoRequest request) {
         Torneo torneo = torneoRepository.findById(request.getTorneoId())
                 .orElseThrow(() -> new IllegalArgumentException("Torneo no encontrado con ID: " + request.getTorneoId()));
+        if (torneo.isArchivado())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No se pueden inscribir equipos en un torneo archivado.");
 
         if (equipoRepository.existsByNombreAndTorneoId(request.getNombre(), request.getTorneoId())) {
             throw new IllegalArgumentException("Ya existe un equipo con ese nombre en este torneo");
@@ -81,6 +87,30 @@ public class EquipoService {
             equipo.setTelefonoContacto(request.getTelefono());
         }
         return mapToResponse(equipoRepository.save(equipo));
+    }
+
+    @Transactional
+    public void eliminarEquipo(Long id) {
+        if (!equipoRepository.existsById(id))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Equipo no encontrado.");
+
+        Integer referencias = jdbc.queryForObject(
+                "SELECT ("
+                + "EXISTS(SELECT 1 FROM partidos WHERE equipo_local_id=? OR equipo_visitante_id=?) OR "
+                + "EXISTS(SELECT 1 FROM pagos WHERE equipo_id=?) OR "
+                + "EXISTS(SELECT 1 FROM tabla_posiciones WHERE equipo_id=?) OR "
+                + "EXISTS(SELECT 1 FROM pase_lista pl JOIN jugadores j ON j.id=pl.jugador_id WHERE pl.equipo_id=? OR j.equipo_id=?) OR "
+                + "EXISTS(SELECT 1 FROM eventos_partido ev LEFT JOIN jugadores j ON j.id=ev.jugador_id OR j.id=ev.jugador_entra_id WHERE ev.equipo_id=? OR j.equipo_id=?) OR "
+                + "EXISTS(SELECT 1 FROM suspensiones s JOIN jugadores j ON j.id=s.jugador_id WHERE j.equipo_id=?)"
+                + ")", Integer.class, id, id, id, id, id, id, id, id, id);
+        if (referencias != null && referencias != 0)
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No se puede borrar este equipo porque tiene historial de partidos, estadísticas o pagos. El historial debe conservarse.");
+
+        // Se borran solo registros sin historial: las huellas se eliminan por la FK de jugador.
+        jdbc.update("DELETE FROM jugadores WHERE equipo_id=?", id);
+        jdbc.update("DELETE FROM inscripciones WHERE equipo_id=?", id);
+        jdbc.update("DELETE FROM equipos WHERE id=?", id);
     }
 
     private EquipoResponse mapToResponse(Equipo equipo) {

@@ -10,5 +10,5 @@ public interface JugadorResumen {
     String getFotoUrl();
     String getEquipo();
     String getPosicion();
-    Boolean getHuella();
+    Integer getHuella();
 }

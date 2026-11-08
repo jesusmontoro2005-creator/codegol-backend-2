@@ -19,6 +19,8 @@ import com.codegol.api.modules.torneos.model.Torneo;
 public interface TorneoRepository extends JpaRepository<Torneo, Long> {
     List<Torneo> findByEstado(EstadoTorneo estado);
     List<Torneo> findByCategoriaId(Long categoriaId);
+    List<Torneo> findAllByArchivadoFalseOrderByFechaInicioDesc();
+    List<Torneo> findAllByOrderByFechaInicioDesc();
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select t from Torneo t where t.id = :id")

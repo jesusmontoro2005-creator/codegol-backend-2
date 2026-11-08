@@ -16,6 +16,7 @@ export default function Jugador() {
     <header className="players-heading"><div><span className="players-eyebrow">ADMINISTRACIÓN · PLANTILLA</span><h1>Jugadores</h1><p>Registra a los jugadores de cada equipo y revisa su estado de huella y suspensión.</p></div><button className="players-add-button" onClick={() => j.abrirFormulario()} disabled={!j.equipos.length}><i className="pi pi-plus" /> Agregar jugador</button></header>
     <ModoDemo />
     {j.error && <p className="player-form-error" role="alert">{j.error}</p>}
+    {j.mensaje && !j.formularioAbierto && <p className="player-form-error" role="status">{j.mensaje}</p>}
     <div className="players-summary"><div className="players-summary-icon"><i className="pi pi-users" /></div><div><span>JUGADORES REGISTRADOS</span><strong>{j.jugadores.length}</strong></div><div><span>SIN HUELLA</span><strong>{sinHuella}</strong></div><div><span>SUSPENDIDOS</span><strong>{j.idsSuspendidos.size}</strong></div><i className="pi pi-shield players-summary-decoration" /></div>
     <div className="players-toolbar"><div><h2>Plantillas</h2><p>Filtra por equipo o busca por nombre, posición o dorsal.</p></div>
       <div className="mx-toolbar"><label className="mx-field">Equipo<select value={j.filtroEquipo} onChange={(e) => j.setFiltroEquipo(e.target.value)}><option value="">Todos</option>{j.equipos.map((e) => <option key={e.id} value={e.id}>{e.nombre}</option>)}</select></label>

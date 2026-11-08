@@ -41,6 +41,9 @@ public class Torneo extends BaseEntity{
     @Column(nullable = false, length = 20)
     private EstadoTorneo estado = EstadoTorneo.EN_INSCRIPCION;
 
+    @Column(nullable = false)
+    private boolean archivado = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;

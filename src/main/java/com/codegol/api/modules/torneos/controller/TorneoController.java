@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codegol.api.modules.torneos.dto.CategoriaDTO;
+import com.codegol.api.modules.torneos.dto.EstadoActivoRequest;
+import com.codegol.api.modules.torneos.dto.EstadoArchivoRequest;
 import com.codegol.api.modules.torneos.dto.TorneoRequest;
 import com.codegol.api.modules.torneos.dto.TorneoResponse;
 import com.codegol.api.modules.torneos.service.TorneoService;
@@ -40,8 +43,16 @@ public class TorneoController {
     }
 
     @GetMapping("/categorias")
-    public ResponseEntity<List<CategoriaDTO>> listarCategorias() {
-        return ResponseEntity.ok(torneoService.obtenerCategoriasActivas());
+    public ResponseEntity<List<CategoriaDTO>> listarCategorias(
+            @RequestParam(defaultValue = "false") boolean incluirInactivas) {
+        return ResponseEntity.ok(incluirInactivas ? torneoService.obtenerTodasLasCategorias()
+                : torneoService.obtenerCategoriasActivas());
+    }
+
+    @PutMapping("/categorias/{id}/estado")
+    public ResponseEntity<CategoriaDTO> cambiarEstadoCategoria(@PathVariable Long id,
+            @RequestBody EstadoActivoRequest request) {
+        return ResponseEntity.ok(torneoService.cambiarEstadoCategoria(id, request.activa()));
     }
 
     // --- Endpoints para Torneos ---
@@ -53,8 +64,10 @@ public class TorneoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TorneoResponse>> listarTorneos() {
-        return ResponseEntity.ok(torneoService.obtenerTodosLosTorneos());
+    public ResponseEntity<List<TorneoResponse>> listarTorneos(
+            @RequestParam(defaultValue = "false") boolean incluirArchivados) {
+        return ResponseEntity.ok(incluirArchivados ? torneoService.obtenerTodosLosTorneosIncluyendoArchivados()
+                : torneoService.obtenerTodosLosTorneos());
     }
 
     @GetMapping("/{id}")
@@ -65,6 +78,12 @@ public class TorneoController {
     @PutMapping("/{id}")
     public ResponseEntity<TorneoResponse> actualizarTorneo(@PathVariable Long id, @RequestBody TorneoRequest request) {
         return ResponseEntity.ok(torneoService.actualizarTorneo(id, request));
+    }
+
+    @PutMapping("/{id}/archivo")
+    public ResponseEntity<TorneoResponse> cambiarArchivo(@PathVariable Long id,
+            @RequestBody EstadoArchivoRequest request) {
+        return ResponseEntity.ok(torneoService.cambiarEstadoArchivo(id, request.archivado()));
     }
 }
 

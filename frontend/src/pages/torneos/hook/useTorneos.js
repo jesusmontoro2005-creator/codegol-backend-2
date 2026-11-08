@@ -9,6 +9,8 @@ import {
   obtenerTorneo,
   obtenerTorneos,
   actualizarTorneo,
+  cambiarEstadoCategoria,
+  cambiarArchivoTorneo,
 } from './torneos'
 
 export default function useTorneos() {
@@ -30,7 +32,7 @@ export default function useTorneos() {
     }
     try {
       const [categoriasApi, torneosApi, equiposApi] = await Promise.all([
-        obtenerCategorias(), obtenerTorneos(), obtenerEquipos(),
+        obtenerCategorias({ incluirInactivas: true }), obtenerTorneos({ incluirArchivados: true }), obtenerEquipos(),
       ])
       setCategorias(categoriasApi)
       setTorneos(torneosApi)
@@ -119,8 +121,30 @@ export default function useTorneos() {
       const actualizado = await actualizarTorneo(torneoSeleccionado, { estado })
       setTorneoDetalle((actual) => ({ ...actual, ...actualizado, estado }))
       setMensaje(`El torneo ahora está ${estado.replaceAll('_', ' ').toLowerCase()}.`)
-      setTorneos(await obtenerTorneos())
+      setTorneos(await obtenerTorneos({ incluirArchivados: true }))
     } catch (cause) { setError(cause.message || 'No se pudo cambiar el estado del torneo.') }
+    finally { setGuardando(false) }
+  }
+
+  async function cambiarCategoriaActiva(id, activa) {
+    setGuardando(true); setError(''); setMensaje('')
+    try {
+      await cambiarEstadoCategoria(id, activa)
+      setMensaje(activa ? 'La categoría se reactivó.' : 'La categoría se desactivó; sus torneos e historial se conservaron.')
+      await cargarCatalogos(false)
+    } catch (cause) { setError(cause.message || 'No se pudo cambiar el estado de la categoría.') }
+    finally { setGuardando(false) }
+  }
+
+  async function cambiarArchivo(archivado) {
+    if (!torneoSeleccionado) return
+    setGuardando(true); setError(''); setMensaje('')
+    try {
+      const actualizado = await cambiarArchivoTorneo(torneoSeleccionado, archivado)
+      setTorneoDetalle((actual) => ({ ...actual, ...actualizado }))
+      setMensaje(archivado ? 'El torneo se archivó y su historial se conservó.' : 'El torneo se restauró.')
+      await cargarCatalogos(false)
+    } catch (cause) { setError(cause.message || 'No se pudo cambiar el archivo del torneo.') }
     finally { setGuardando(false) }
   }
 
@@ -133,6 +157,6 @@ export default function useTorneos() {
   return {
     categorias, torneos, equipos, equiposInscritos, torneoSeleccionado, torneoDetalle,
     seleccionarTorneo, cargando, guardando, error, mensaje,
-    guardarCategoria, guardarTorneo, guardarEquipo, cambiarEstado, recargar: cargarCatalogos,
+    guardarCategoria, guardarTorneo, guardarEquipo, cambiarEstado, cambiarCategoriaActiva, cambiarArchivo, recargar: cargarCatalogos,
   }
 }

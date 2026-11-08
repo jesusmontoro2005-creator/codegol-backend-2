@@ -23,6 +23,7 @@ public class TorneoResponse {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private EstadoTorneo estado;
+    private boolean archivado;
     private CategoriaDTO categoria;
     private BigDecimal cuotaInscripcion;
     private BigDecimal cuotaArbitraje;

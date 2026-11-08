@@ -313,8 +313,10 @@ public class CalendarioService {
 
     private Torneo bloquearTorneo(Long id) {
         if (id == null || id <= 0) throw CalendarioException.invalid("El torneo no es válido.");
-        return torneoRepository.bloquearPorId(id)
+        Torneo torneo = torneoRepository.bloquearPorId(id)
                 .orElseThrow(() -> CalendarioException.notFound("No se encontró el torneo."));
+        if (torneo.isArchivado()) throw CalendarioException.conflict("No se puede modificar el calendario de un torneo archivado.");
+        return torneo;
     }
 
     private void validarTorneoAbierto(Torneo torneo) {

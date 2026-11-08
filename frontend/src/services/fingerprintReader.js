@@ -39,14 +39,21 @@ export async function capturarMuestraHuella({ onEstado = () => {}, timeoutMs = 3
     })
     reader.on('DeviceDisconnected', () => onEstado('lector_desconectado'))
     reader.on('QualityReported', (event) => onEstado(event.quality === 0 ? 'calidad_correcta' : 'ajusta_el_dedo'))
-    reader.on('ErrorOccurred', () => reject(new Error('El lector reportó un error durante la captura.')))
+    reader.on('ErrorOccurred', (event) => reject(new Error(`El lector reportó un error durante la captura (código ${event.error ?? 'desconocido'}).`)))
     reader.on('SamplesAcquired', (event) => {
-      const sample = event.samples?.[0]
-      if (!sample?.Data) {
-        reject(new Error('El lector no devolvió una muestra válida.'))
+      const sampleList = Array.isArray(event.samples) ? event.samples : []
+      const sample = sampleList[0]
+      const data = typeof sample === 'string'
+        ? sample
+        : sample?.Data ?? sample?.data ?? sample?.SampleData ?? sample?.sampleData
+      if (typeof data !== 'string' || !data.trim()) {
+        const keys = sample && typeof sample === 'object' ? Object.keys(sample).join(', ') : typeof sample
+        reject(new Error(`DigitalPersona informó una captura, pero sin imagen utilizable (formato ${event.sampleFormat ?? 'desconocido'}, muestras ${sampleList.length}, campos ${keys || 'ninguno'}). Verifica el HID Authentication Device Client y vuelve a intentar.`))
         return
       }
-      resolve({ sample, deviceId: event.deviceId, sampleFormat: event.sampleFormat })
+      // Data is Base64URL encoded by the DigitalPersona Web SDK. Never log or
+      // display its value because it contains the player's biometric sample.
+      resolve({ sample: { ...sample, Data: data }, deviceId: event.deviceId, sampleFormat: event.sampleFormat })
     })
 
     timer = window.setTimeout(() => reject(new Error('No se recibió una huella. Intenta nuevamente.')), timeoutMs)
