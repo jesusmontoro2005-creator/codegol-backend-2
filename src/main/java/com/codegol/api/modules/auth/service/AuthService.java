@@ -33,11 +33,13 @@ public class AuthService {
             throw new org.springframework.security.access.AccessDeniedException("Solo un administrador puede registrar usuarios.");
         }
         if (usuarioRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("El nombre de usuario '" + request.getUsername() + "' ya está registrado.");
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                    "El nombre de usuario '" + request.getUsername() + "' ya está registrado.");
         }
 
         if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("El correo '" + request.getEmail() + "' ya está en uso.");
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                    "El correo '" + request.getEmail() + "' ya está en uso.");
         }
 
         Usuario usuario = Usuario.builder()

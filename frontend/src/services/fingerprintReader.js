@@ -16,7 +16,7 @@ function loadWebSdk() {
     document.head.appendChild(script)
   }).catch((error) => {
     webSdkPromise = undefined
-    throw error
+    throw new Error(error instanceof Error ? error.message : 'No se pudo iniciar la captura biométrica.', { cause: error })
   })
 
   return webSdkPromise
@@ -70,7 +70,7 @@ export async function capturarMuestraHuella({ onEstado = () => {}, timeoutMs = 3
     return await samplePromise
   } catch (error) {
     if (error instanceof Error && /WebSocket|connect|connection/i.test(error.message)) {
-      throw new Error('No se pudo conectar con DigitalPersona. Revisa que el Authentication Device Client esté instalado y activo.')
+      throw new Error('No se pudo conectar con DigitalPersona. Revisa que el Authentication Device Client esté instalado y activo.', { cause: error })
     }
     throw error
   } finally {

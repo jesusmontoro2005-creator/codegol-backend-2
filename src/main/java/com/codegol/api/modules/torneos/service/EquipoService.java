@@ -29,22 +29,31 @@ public class EquipoService {
 
     @Transactional
     public EquipoResponse registrarEquipo(EquipoRequest request) {
+        String nombre = request.getNombre().trim().replaceAll("\\s+", " ");
+        String delegado = request.getDelegado() == null ? "" : request.getDelegado().trim().replaceAll("\\s+", " ");
+        String telefono = request.getTelefono() == null ? "" : request.getTelefono().trim();
+        if (delegado.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del delegado es obligatorio.");
+        if (telefono.replaceAll("\\D", "").length() != 10)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El teléfono del delegado debe tener exactamente 10 dígitos.");
         Torneo torneo = torneoRepository.findById(request.getTorneoId())
                 .orElseThrow(() -> new IllegalArgumentException("Torneo no encontrado con ID: " + request.getTorneoId()));
         if (torneo.isArchivado())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No se pueden inscribir equipos en un torneo archivado.");
+        if (torneo.getEstado() == com.codegol.api.modules.torneos.model.EstadoTorneo.FINALIZADO
+                || torneo.getEstado() == com.codegol.api.modules.torneos.model.EstadoTorneo.CANCELADO)
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No se pueden inscribir equipos en un torneo cerrado.");
 
-        if (equipoRepository.existsByNombreAndTorneoId(request.getNombre(), request.getTorneoId())) {
-            throw new IllegalArgumentException("Ya existe un equipo con ese nombre en este torneo");
+        if (equipoRepository.existsByNombreIgnoreCaseAndTorneoId(nombre, request.getTorneoId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un equipo con ese nombre en este torneo.");
         }
 
         Equipo equipo = new Equipo();
-        equipo.setNombre(request.getNombre());
+        equipo.setNombre(nombre);
         equipo.setLogoUrl(request.getLogoUrl());
-        equipo.setDelegado(request.getDelegado());
-        equipo.setNombreRepresentante(request.getDelegado());
-        equipo.setTelefono(request.getTelefono());
-        equipo.setTelefonoContacto(request.getTelefono());
+        equipo.setDelegado(delegado);
+        equipo.setNombreRepresentante(delegado);
+        equipo.setTelefono(telefono);
+        equipo.setTelefonoContacto(telefono);
         // El alta del equipo no equivale a un cobro; solo Finanzas marca la inscripción pagada.
         equipo.setPagoInscripcionCubierto(false);
         equipo.setTorneo(torneo);
@@ -76,13 +85,32 @@ public class EquipoService {
     public EquipoResponse actualizarEquipo(Long id, EquipoRequest request) {
         Equipo equipo = equipoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Equipo no encontrado con ID: " + id));
-        if (request.getNombre() != null) equipo.setNombre(request.getNombre());
-        if (request.getLogoUrl() != null) equipo.setLogoUrl(request.getLogoUrl());
+        if (request.getNombre() != null) {
+            String nombre = request.getNombre().trim().replaceAll("\\s+", " ");
+            if (nombre.length() < 2 || nombre.length() > 100 || !nombre.matches("[\\p{L}\\p{N}][\\p{L}\\p{N} .,&'\\-]*")
+                    || !nombre.matches(".*\\p{L}.*"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del equipo no tiene un formato válido.");
+            if (equipoRepository.existsByNombreIgnoreCaseAndTorneoIdAndIdNot(nombre, equipo.getTorneo().getId(), id))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un equipo con ese nombre en este torneo.");
+            equipo.setNombre(nombre);
+        }
+        if (request.getLogoUrl() != null) {
+            if (request.getLogoUrl().length() > 255 || !request.getLogoUrl().isBlank()
+                    && !request.getLogoUrl().matches("https?://.+"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El logo debe ser una URL http o https de hasta 255 caracteres.");
+            equipo.setLogoUrl(request.getLogoUrl());
+        }
         if (request.getDelegado() != null) {
+            if (request.getDelegado().length() > 100 || !request.getDelegado().isBlank()
+                    && !request.getDelegado().matches("[A-Za-zÁÉÍÓÚÜÑáéíóúüñ][A-Za-zÁÉÍÓÚÜÑáéíóúüñ' .-]*"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del delegado no tiene un formato válido.");
             equipo.setDelegado(request.getDelegado());
             equipo.setNombreRepresentante(request.getDelegado());
         }
         if (request.getTelefono() != null) {
+            if (request.getTelefono().length() > 20 || !request.getTelefono().isBlank()
+                    && (!request.getTelefono().matches("[0-9() +\\-]+") || request.getTelefono().replaceAll("\\D", "").length() != 10))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El teléfono debe contener exactamente 10 dígitos.");
             equipo.setTelefono(request.getTelefono());
             equipo.setTelefonoContacto(request.getTelefono());
         }

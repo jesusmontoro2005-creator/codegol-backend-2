@@ -17,6 +17,8 @@ import com.codegol.api.modules.torneos.model.Torneo;
 
 @Repository
 public interface TorneoRepository extends JpaRepository<Torneo, Long> {
+    boolean existsByNombreIgnoreCase(String nombre);
+    boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
     List<Torneo> findByEstado(EstadoTorneo estado);
     List<Torneo> findByCategoriaId(Long categoriaId);
     List<Torneo> findAllByArchivadoFalseOrderByFechaInicioDesc();

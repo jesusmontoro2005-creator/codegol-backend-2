@@ -14,6 +14,8 @@ import org.springframework.data.repository.query.Param;
 public interface EquipoRepository extends JpaRepository<Equipo, Long>{
 	List<Equipo> findByTorneoId(Long torneoId);
     boolean existsByNombreAndTorneoId(String nombre, Long torneoId);
+	boolean existsByNombreIgnoreCaseAndTorneoId(String nombre, Long torneoId);
+	boolean existsByNombreIgnoreCaseAndTorneoIdAndIdNot(String nombre, Long torneoId, Long id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select e from Equipo e where e.id in :ids order by e.id")

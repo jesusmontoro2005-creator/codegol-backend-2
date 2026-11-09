@@ -12,6 +12,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.AssertTrue;
 	import lombok.AllArgsConstructor;
 	import lombok.Builder;
 	import lombok.Data;
@@ -24,10 +26,10 @@ import jakarta.validation.constraints.Max;
 	public class TorneoRequest {
 
 	    @NotBlank(message = "El nombre del torneo es obligatorio")
-	    @Size(max = 100, message = "El nombre no debe exceder 100 caracteres")
+	    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
 	    private String nombre;
 
-	    @Size(max = 500)
+	    @Size(max = 500, message = "La descripción no puede exceder 500 caracteres")
 	    private String descripcion;
 
 	    @NotNull(message = "La fecha de inicio es obligatoria")
@@ -40,16 +42,23 @@ import jakarta.validation.constraints.Max;
 	    @NotNull(message = "Debes indicar el ID de la categoría")
 	    private Long categoriaId;
 
-        @DecimalMin("0.00")
-        @Digits(integer = 8, fraction = 2)
+        @DecimalMin(value = "0.00", message = "La cuota no puede ser negativa")
+        @DecimalMax(value = "100000.00", message = "La cuota no puede exceder 100,000")
+        @Digits(integer = 6, fraction = 2, message = "La cuota admite hasta dos decimales y un máximo de 100,000")
         private BigDecimal cuotaInscripcion;
 
-        @DecimalMin("0.00")
-        @Digits(integer = 8, fraction = 2)
+        @DecimalMin(value = "0.00", message = "La cuota no puede ser negativa")
+        @DecimalMax(value = "100000.00", message = "La cuota no puede exceder 100,000")
+        @Digits(integer = 6, fraction = 2, message = "La cuota admite hasta dos decimales y un máximo de 100,000")
         private BigDecimal cuotaArbitraje;
 
-        @Min(1)
-        @Max(10)
+        @Min(value = 1, message = "Las amarillas para suspensión deben ser al menos 1")
+        @Max(value = 10, message = "Las amarillas para suspensión no pueden exceder 10")
         private Integer limiteAmarillas;
+
+        @AssertTrue(message = "La fecha de cierre no puede ser anterior a la fecha de inicio")
+        public boolean isRangoFechasValido() {
+            return fechaInicio == null || fechaFin == null || !fechaFin.isBefore(fechaInicio);
+        }
 	}
 

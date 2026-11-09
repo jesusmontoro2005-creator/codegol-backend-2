@@ -29,12 +29,13 @@ public class TorneoService {
 
     @Transactional
     public CategoriaDTO crearCategoria(CategoriaDTO dto) {
-        if (categoriaRepository.existsByNombre(dto.getNombre())) {
-            throw new IllegalArgumentException("Ya existe una categoría con el nombre: " + dto.getNombre());
+        String nombre = dto.getNombre().trim().replaceAll("\\s+", " ");
+        if (categoriaRepository.existsByNombreIgnoreCase(nombre)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una categoría con el nombre: " + nombre);
         }
 
         Categoria categoria = new Categoria();
-        categoria.setNombre(dto.getNombre());
+        categoria.setNombre(nombre);
         categoria.setDescripcion(dto.getDescripcion());
         categoria.setActiva(true);
 
@@ -65,13 +66,17 @@ public class TorneoService {
 
     @Transactional
     public TorneoResponse crearTorneo(TorneoRequest request) {
+        String nombre = request.getNombre().trim().replaceAll("\\s+", " ");
+        if (torneoRepository.existsByNombreIgnoreCase(nombre)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un torneo con ese nombre.");
+        }
         Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada con ID: " + request.getCategoriaId()));
         if (!categoria.isActiva())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No se pueden crear torneos con una categoría desactivada.");
 
         Torneo torneo = new Torneo();
-        torneo.setNombre(request.getNombre());
+        torneo.setNombre(nombre);
         torneo.setDescripcion(request.getDescripcion());
         torneo.setFechaInicio(request.getFechaInicio());
         torneo.setFechaFin(request.getFechaFin());
@@ -121,19 +126,50 @@ public class TorneoService {
     public TorneoResponse actualizarTorneo(Long id, TorneoRequest request) {
         Torneo torneo = torneoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Torneo no encontrado con ID: " + id));
-        if (request.getNombre() != null) torneo.setNombre(request.getNombre());
-        if (request.getDescripcion() != null) torneo.setDescripcion(request.getDescripcion());
+        if (request.getNombre() != null) {
+            String nombre = request.getNombre().trim().replaceAll("\\s+", " ");
+            if (nombre.length() < 3 || nombre.length() > 100)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del torneo debe tener entre 3 y 100 caracteres.");
+            if (torneoRepository.existsByNombreIgnoreCaseAndIdNot(nombre, id))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un torneo con ese nombre.");
+            torneo.setNombre(nombre);
+        }
+        if (request.getDescripcion() != null) {
+            if (request.getDescripcion().length() > 500)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La descripción no puede exceder 500 caracteres.");
+            torneo.setDescripcion(request.getDescripcion());
+        }
         if (request.getFechaInicio() != null) torneo.setFechaInicio(request.getFechaInicio());
         if (request.getFechaFin() != null) torneo.setFechaFin(request.getFechaFin());
         if (request.getEstado() != null) torneo.setEstado(request.getEstado());
         if (request.getCategoriaId() != null) {
-            torneo.setCategoria(categoriaRepository.findById(request.getCategoriaId())
-                    .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada con ID: " + request.getCategoriaId())));
+            Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+                    .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada con ID: " + request.getCategoriaId()));
+            if (!categoria.isActiva()) throw new ResponseStatusException(HttpStatus.CONFLICT, "No se puede asignar una categoría desactivada.");
+            torneo.setCategoria(categoria);
         }
-        if (request.getCuotaInscripcion() != null) torneo.setCuotaInscripcion(request.getCuotaInscripcion());
-        if (request.getCuotaArbitraje() != null) torneo.setCuotaArbitraje(request.getCuotaArbitraje());
-        if (request.getLimiteAmarillas() != null) torneo.setLimiteAmarillas(request.getLimiteAmarillas().byteValue());
+        if (request.getCuotaInscripcion() != null) {
+            validarCuota(request.getCuotaInscripcion());
+            torneo.setCuotaInscripcion(request.getCuotaInscripcion());
+        }
+        if (request.getCuotaArbitraje() != null) {
+            validarCuota(request.getCuotaArbitraje());
+            torneo.setCuotaArbitraje(request.getCuotaArbitraje());
+        }
+        if (request.getLimiteAmarillas() != null) {
+            if (request.getLimiteAmarillas() < 1 || request.getLimiteAmarillas() > 10)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las amarillas para suspensión deben estar entre 1 y 10.");
+            torneo.setLimiteAmarillas(request.getLimiteAmarillas().byteValue());
+        }
+        if (torneo.getFechaFin() != null && torneo.getFechaFin().isBefore(torneo.getFechaInicio()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La fecha de cierre no puede ser anterior a la fecha de inicio.");
         return mapToTorneoResponse(torneoRepository.save(torneo));
+    }
+
+    private static void validarCuota(java.math.BigDecimal cuota) {
+        if (cuota.signum() < 0 || cuota.compareTo(new java.math.BigDecimal("100000.00")) > 0
+                || cuota.scale() > 2)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cuota debe ser un monto entre 0 y 100,000 con hasta dos decimales.");
     }
 
     // Mapeadores auxiliares
